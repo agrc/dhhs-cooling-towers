@@ -96,10 +96,26 @@ def download_tiles(col, row):
     img_3 = requests.get(f"{BASE_URL}/{col_num}/{row_num + 1}").content
     #: dowload bottom-right tile
     img_4 = requests.get(f"{BASE_URL}/{col_num + 1}/{row_num + 1}").content
+    if out_dir:
+        if not out_dir.exists():
+            out_dir.mkdir(parents=True)
 
-    tile_list = [img_1, img_2, img_3, img_4]
+        i = 0
+        for tile in tile_list:
+            img = convert_to_cv2_image(tile)
+            logging.info("download is saving from %s", type(img))
+            tile_outfile = out_dir / f"{col}_{row}_{i}.jpg"
+            logging.info("saving to %s", tile_outfile)
+            cv2.imwrite(str(tile_outfile), img)
 
-    return tile_list
+            i += 1
+
+        return tile_list
+
+    else:
+        logging.debug("no output directory provided")
+
+        return tile_list
 
 
 def build_mosaic_image(tiles, col, row, out_dir):
