@@ -70,6 +70,85 @@ def convert_to_cv2_image(image):
 
 
 
+def retry(worker_method, *args):
+    """Allows you to retry a function/method three times to overcome network jitters
+
+    Retries worker_method three times (for a total of four tries, including the initial attempt), pausing 2^trycount
+    seconds between each retry. Any arguments for worker_method can be passed in as additional parameters to retry()
+    following worker_method: retry(foo_method, arg1, arg2, keyword_arg=3)
+
+    Args:
+        worker_method (callable): The name of the method to be retried (minus the calling parens)
+
+    Raises:
+        error: The final error that causes worker_method to fail after 3 retries
+
+    Returns:
+        various: The value(s) returned by worked_method
+    """
+    tries = 1
+    max_tries = 3
+    delay = 2  #: in seconds
+
+    #: this inner function (closure? almost-closure?) allows us to keep track of tries without passing it as an arg
+    def _inner_retry(worker_method, *args):
+        nonlocal tries
+
+        try:
+            return worker_method(*args)
+
+        #: general exception
+        except Exception as error:
+            if tries <= max_tries:  # pylint: disable=no-else-return
+                wait_time = delay**tries
+                logging.debug(
+                    'Exception "%s" thrown on "%s". Retrying after %s seconds...', error, worker_method, wait_time
+                )
+                sleep(wait_time)
+                tries += 1
+                return _inner_retry(worker_method, *args)
+            else:
+                raise error
+
+    return _inner_retry(worker_method, *args)
+
+
+def get_tile(url):
+    """Makes a requests.get call to the geocoding API.
+
+    Meant to be called through a retry wrapper so that the RuntimeErrors get tried again a couple times before
+        finally raising the error.
+
+    Args:
+        url (str): url for GET request
+
+    Raises:
+        RuntimeError: If the server does not return response and request.get returns a falsy object.
+        RuntimeError: If the server returns a status code other than 200 or 404
+
+    Returns:
+        dict: The 'results' dictionary of the response json (location, score, and matchAddress)
+    """
+
+    response = requests.get(url, timeout=5)
+
+    #: the server times out and doesn't respond
+    if response is None:
+        logging.debug("GET call did not return a response")
+        raise RuntimeError("No response from GET; request timeout?")
+
+    #: the tile request is successful
+    if response.status_code == 200:
+        return response
+
+    #: the tile request fails
+    if response.status_code == 404:
+        return None
+
+    #: if we haven't returned, raise an error to trigger _retry
+    raise RuntimeError(f"Did not receive a valid tile download response; status code: {response.status_code}")
+
+
 def download_tiles(col, row, out_dir):
     """downloads image at specified col/row and each neigbor to the right, down, and right-down,
     then converts them to cv2 images and returns the list
