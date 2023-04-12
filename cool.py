@@ -349,15 +349,13 @@ def detect_towers(image):
 
     scan_start = perf_counter()
     results = towerscout_model(image)
-    logging.info('time to scan image: %s',  format_time(perf_counter() - scan_start))
-
-    results.save()
+    logging.info("time to scan image: %s", format_time(perf_counter() - scan_start))
 
     return results
 
 
-def parse_results(results, col, row):
-    """parse detection results and calculate coordinates
+def locate_results(results, col, row):
+    """locate detection results and calculate coordinates
 
     Args:
         results_df (dataframe): dataframe with results from pytorch model
@@ -388,7 +386,9 @@ def parse_results(results, col, row):
     wgs84 = 4326
     web_mercator = 3857
 
-    transformer = pyproj.Transformer.from_crs(pyproj.CRS.from_epsg(wgs84), pyproj.CRS.from_epsg(web_mercator), always_xy=True)
+    transformer = pyproj.Transformer.from_crs(
+        pyproj.CRS.from_epsg(wgs84), pyproj.CRS.from_epsg(web_mercator), always_xy=True
+    )
     x, y = transformer.transform(tile.lng, tile.lat)
 
     #: calculate centroid x/y coords in web mercator
