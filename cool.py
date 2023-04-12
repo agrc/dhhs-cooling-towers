@@ -97,18 +97,12 @@ def download_tiles(col, row):
     #: dowload bottom-right tile
     img_4 = requests.get(f"{BASE_URL}/{col_num + 1}/{row_num + 1}").content
 
-    tile_images = [img_1, img_2, img_3, img_4]
+    tile_list = [img_1, img_2, img_3, img_4]
 
-    cv2_images = []
-
-    #: convert bytes images to cv2
-    for image in tile_images:
-        cv2_images.append(convert_to_cv2_image(image))
-
-    return cv2_images
+    return tile_list
 
 
-def build_mosaic_image(images, col, row, out_dir):
+def build_mosaic_image(tiles, col, row, out_dir):
     """build a mosaic image from a list of cv2 images
 
     Args:
@@ -120,9 +114,10 @@ def build_mosaic_image(images, col, row, out_dir):
     Returns:
         mosaic_image (np.ndarray): composite mosaic of smaller images
     """
+    
     tile_name = f'{col}_{row}'
 
-    if images is None or len(images) == 0:
+    if tiles is None or len(tiles) == 0:
         logging.info("no images to mosaic for %s", tile_name)
 
         return np.array(None)
@@ -143,9 +138,9 @@ def build_mosaic_image(images, col, row, out_dir):
     mosaic_image[:, :] = (255, 255, 255)
 
     i = 0
-    for img in images:
+    for tile in tiles:
         #: convert from bytes to cv2
-
+        img = convert_to_cv2_image(tile)
         #: Add image into the mosaic
         row_start = (math.floor(i / number_columns)) * tile_width
         col_start = (i % number_columns) * tile_width
