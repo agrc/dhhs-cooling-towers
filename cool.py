@@ -259,6 +259,8 @@ def build_mosaic_image(tiles, col, row, out_dir):
     mosaic_image = np.zeros((total_height, total_width, 3), dtype=np.uint8)
     mosaic_image[:, :] = (255, 255, 255)
 
+    logging.debug("mosaic is starting with %s", type(tiles[0]))
+
     i = 0
     for tile in tiles:
         #: convert from bytes to cv2
@@ -269,6 +271,8 @@ def build_mosaic_image(tiles, col, row, out_dir):
         mosaic_image[row_start : row_start + tile_width, col_start : col_start + tile_width] = img
 
         i += 1
+
+    logging.debug("mosaic is returning %s", type(mosaic_image))
 
     if out_dir:
         if not out_dir.exists():
