@@ -50,10 +50,9 @@ def _get_secrets():
     #: Otherwise, try to load a local copy for local development
     secret_folder = Path(__file__).parent / "secrets"
     if secret_folder.exists():
-        return json.loads((secret_folder / 'secrets.json').read_text(encoding='utf-8'))
+        return json.loads((secret_folder / "secrets.json").read_text(encoding="utf-8"))
 
-    raise FileNotFoundError('Secrets folder not found; secrets not loaded.')
-
+    raise FileNotFoundError("Secrets folder not found; secrets not loaded.")
 
 
 def convert_to_cv2_image(image):
