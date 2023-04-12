@@ -333,15 +333,9 @@ def detect_towers(image):
     Returns:
         result (obj): pytorch result object
     """
-    towerscout_model = get_model()
-        
-    # if isinstance(image, Path):
-    #     logging.info('working with a Path')
-    #     pil_image = Image.open(image)
-    # elif isinstance(image, np.ndarray):
-    #     logging.info('working with a numpy array')
-    #     pil_image = Image.fromarray(image)
     towerscout_model = _get_model()
+
+    logging.info("detect is working with %s", type(image))
 
     if isinstance(image, np.ndarray):
         logging.info("reordering colors to RGB")
