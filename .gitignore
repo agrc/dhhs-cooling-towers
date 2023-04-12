@@ -132,7 +132,9 @@ dmypy.json
 .pyre/
 
 data/
-
+mosaics/
+tiles/
+results/
 runs/
 
 yolov5/
