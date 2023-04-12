@@ -130,8 +130,8 @@ def build_mosaic_image(tiles, col, row, out_dir):
     Returns:
         mosaic_image (np.ndarray): composite mosaic of smaller images
     """
-    
-    tile_name = f'{col}_{row}'
+
+    tile_name = f"{col}_{row}"
 
     if tiles is None or len(tiles) == 0:
         logging.info("no images to mosaic for %s", tile_name)
@@ -156,7 +156,7 @@ def build_mosaic_image(tiles, col, row, out_dir):
     for tile in tiles:
         #: convert from bytes to cv2
         img = convert_to_cv2_image(tile)
-        #: Add image into the mosaic
+        #: add image into the mosaic
         row_start = (math.floor(i / number_columns)) * tile_width
         col_start = (i % number_columns) * tile_width
         mosaic_image[row_start : row_start + tile_width, col_start : col_start + tile_width] = img
@@ -188,11 +188,11 @@ def load_pytorch_model():
     Returns:
         pytorch model: model ready for scanning
     """
-    model_weight_path = Path(__file__).parent / 'tower_scout' / 'xl_250_best.pt'
-    yolov5_path = Path(__file__).parent / 'yolov5'
-    model = torch.hub.load(str(yolov5_path), 'custom', path=str(model_weight_path), source='local')
+    model_weight_path = Path(__file__).parent / "tower_scout" / "xl_250_best.pt"
+    yolov5_path = Path(__file__).parent / "yolov5"
+    model = torch.hub.load(str(yolov5_path), "custom", path=str(model_weight_path), source="local")
     #: if statements (check that .pt file exists, folders, etc.)
-    
+
     return model
 
 
@@ -207,7 +207,7 @@ def get_model():
     """
     global MODEL
     if MODEL is None:
-        logging.info('loading pytorch model')
+        logging.info("loading pytorch model")
         MODEL = load_pytorch_model()
 
     return MODEL
@@ -253,22 +253,22 @@ def parse_results(results, col, row):
     Returns:
         results_df (dataframe): results dataframe with additional columns that were calculated
     """
-    results_df = results.pandas().xyxy[0] #:0 gets the dataframe, otherwise it would be a list
-    
+    results_df = results.pandas().xyxy[0]  #:0 gets the dataframe, otherwise it would be a list
+
     #: check for empty dataframe
     if results_df.empty:
-        logging.info('empty dataframe, no cooling towers detected')
+        logging.info("empty dataframe, no cooling towers detected")
 
         return results_df
-    
+
     zoom_level = 20
 
     #: get upper-left coordinates of the primary tile (upper-left tile)
     tile = mercantile.ul(int(col), int(row), zoom_level)
 
     #: calculate centroid in pixels
-    results_df['x_centroid_px'] = ((results_df['xmin'] + results_df['xmax']) / 2)
-    results_df['y_centroid_px'] = ((results_df['ymin'] + results_df['ymax']) / 2)
+    results_df["x_centroid_px"] = (results_df["xmin"] + results_df["xmax"]) / 2
+    results_df["y_centroid_px"] = (results_df["ymin"] + results_df["ymax"]) / 2
 
     #: project tile coords to web mercator (3857)
     wgs84 = 4326
@@ -279,10 +279,8 @@ def parse_results(results, col, row):
 
     #: calculate centroid x/y coords in web mercator
     meters_per_pixel = 0.1492910708688
-    results_df['x_centroid_3857'] = x + results_df['x_centroid_px'] * meters_per_pixel
-    results_df['y_centroid_3857'] = y - results_df['y_centroid_px'] * meters_per_pixel
-
-    print(results_df.head().to_string())
+    results_df["x_centroid_3857"] = x + results_df["x_centroid_px"] * meters_per_pixel
+    results_df["y_centroid_3857"] = y - results_df["y_centroid_px"] * meters_per_pixel
 
     return results_df
 
@@ -304,7 +302,3 @@ def format_time(seconds):
         return f"{round(seconds / minute, 2)} minutes"
 
     return f"{round(seconds / hour, 2)} hours"
-
-
-
-
