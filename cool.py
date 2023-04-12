@@ -9,7 +9,7 @@ import logging
 import math
 from os import environ
 from pathlib import Path
-from time import perf_counter
+from time import perf_counter, sleep
 from types import SimpleNamespace
 
 import cv2
