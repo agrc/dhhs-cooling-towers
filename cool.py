@@ -80,10 +80,10 @@ def download_tiles(col, row):
     """
     global SECRETS
 
-    if secrets is None:
-        logging.info('loading secrets')
-        secrets = SimpleNamespace(**_get_secrets())
-    
+    if SECRETS is None:
+        logging.info("loading secrets")
+        SECRETS = SimpleNamespace(**_get_secrets())
+
     BASE_URL = f"https://discover.agrc.utah.gov/login/path/{SECRETS.QUAD_WORD}/tiles/utah/20"
     col_num = int(col)
     row_num = int(row)
