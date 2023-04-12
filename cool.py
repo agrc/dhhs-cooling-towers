@@ -307,7 +307,7 @@ def load_pytorch_model():
     return model
 
 
-def get_model():
+def _get_model():
     """gets pytorch model using logic to ensure it's only loaded once
 
     Args:
@@ -341,6 +341,7 @@ def detect_towers(image):
     # elif isinstance(image, np.ndarray):
     #     logging.info('working with a numpy array')
     #     pil_image = Image.fromarray(image)
+    towerscout_model = _get_model()
 
     if isinstance(image, np.ndarray):
         logging.info("reordering colors to RGB")
