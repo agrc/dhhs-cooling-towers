@@ -69,12 +69,15 @@ def convert_to_cv2_image(image):
     return cv2.imdecode(np.frombuffer(image, dtype=np.uint8), 1)  # 1 means flags=cv2.IMREAD_COLOR
 
 
-def download_tiles(col, row):
+
+def download_tiles(col, row, out_dir):
     """downloads image at specified col/row and each neigbor to the right, down, and right-down,
     then converts them to cv2 images and returns the list
+
     Args:
         col (str): the column of the WMTS index for the tile of interest (top-left tile)
         row (str): the row of the WMTS index for the tile of interest (top-left tile)
+
     Returns:
         cv2_images (list): list of cv2 images
     """
@@ -88,14 +91,28 @@ def download_tiles(col, row):
     col_num = int(col)
     row_num = int(row)
 
-    #: download primary tile (top-left)
-    img_1 = requests.get(f"{BASE_URL}/{col_num}/{row_num}").content
-    #: dowload top-right tile
-    img_2 = requests.get(f"{BASE_URL}/{col_num + 1}/{row_num}").content
-    #: dowload bottom-left tile
-    img_3 = requests.get(f"{BASE_URL}/{col_num}/{row_num + 1}").content
-    #: dowload bottom-right tile
-    img_4 = requests.get(f"{BASE_URL}/{col_num + 1}/{row_num + 1}").content
+    urls = []
+    #: build url for primary tile (top-left)
+    urls.append(f"{BASE_URL}/{col_num}/{row_num}")
+    #: build url for top-right tile
+    urls.append(f"{BASE_URL}/{col_num + 1}/{row_num}")
+    #: build url for bottom-left tile
+    urls.append(f"{BASE_URL}/{col_num}/{row_num + 1}")
+    #: build url for bottom-right tile
+    urls.append(f"{BASE_URL}/{col_num + 1}/{row_num + 1}")
+
+    #: make requests for each url/tile in the url list
+    tile_list = []
+    for url in urls:
+        tile_list.append(retry(get_tile, url).content)
+
+    if not all(tile_list):
+        logging.debug("at least one tile failed to download; aborting...")
+
+        return None
+
+    logging.debug("download function is working with %s", type(tile_list[0]))
+
     if out_dir:
         if not out_dir.exists():
             out_dir.mkdir(parents=True)
