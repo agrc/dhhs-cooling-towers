@@ -278,7 +278,7 @@ def build_mosaic_image(tiles, col, row, out_dir):
         if not out_dir.exists():
             out_dir.mkdir(parents=True)
 
-        mosaic_outfile = out_dir / f"{tile_name}.jpg"
+        mosaic_outfile = out_dir / f"{tile_name}_mosaic.jpg"
         logging.debug("saving to %s", mosaic_outfile)
         cv2.imwrite(str(mosaic_outfile), mosaic_image)
 
