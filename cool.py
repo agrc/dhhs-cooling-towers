@@ -64,9 +64,21 @@ def convert_to_cv2_image(image):
     Returns:
         cv2.Image: A cv2 image object
     """
-   
+
     return cv2.imdecode(np.frombuffer(image, dtype=np.uint8), 1)  # 1 means flags=cv2.IMREAD_COLOR
 
+
+def reorder_colors_to_rgb(image):
+    """reorders np.ndarray image object from BGR to RGB
+
+    Args:
+        image (np.ndarray): The image to reorder colors
+
+    Returns:
+        np.ndarray: The image with reordered colors
+    """
+
+    return cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
 
 
 def retry(worker_method, *args):
@@ -326,7 +338,9 @@ def detect_towers(image):
     #     logging.info('working with a numpy array')
     #     pil_image = Image.fromarray(image)
 
-    logging.info('working with %s', type(image))
+    if isinstance(image, np.ndarray):
+        logging.info("reordering colors to RGB")
+        image = reorder_colors_to_rgb(image)
 
     scan_start = perf_counter()
     results = towerscout_model(image)
