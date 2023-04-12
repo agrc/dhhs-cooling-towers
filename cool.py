@@ -124,7 +124,6 @@ def build_mosaic_image(tiles, col, row, out_dir):
 
     #: Set up parameters for images, mosaic, number of cols/rows (every image will be 256x256)
     tile_width = 256
-    number_images = 4
     number_columns = 2
     number_rows = 2
 
@@ -261,19 +260,13 @@ def parse_results(results, col, row):
 
     transformer = pyproj.Transformer.from_crs(pyproj.CRS.from_epsg(wgs84), pyproj.CRS.from_epsg(web_mercator), always_xy=True)
     x, y = transformer.transform(tile.lng, tile.lat)
-    print(f'x: {x}')
-    print(f'y: {y}')
 
     #: calculate centroid x/y coords in web mercator
     meters_per_pixel = 0.1492910708688
     results_df['x_centroid_3857'] = x + results_df['x_centroid_px'] * meters_per_pixel
     results_df['y_centroid_3857'] = y - results_df['y_centroid_px'] * meters_per_pixel
 
-    print(results_df.head(10))
-
-    print(results_df.loc[0, 'x_centroid_3857'], results_df.loc[0, 'y_centroid_3857'])
-    print(results_df.loc[1, 'x_centroid_3857'], results_df.loc[1, 'y_centroid_3857'])
-    print(results_df.loc[2, 'x_centroid_3857'], results_df.loc[2, 'y_centroid_3857'])
+    print(results_df.head().to_string())
 
     return results_df
 
