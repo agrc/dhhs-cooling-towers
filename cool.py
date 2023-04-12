@@ -29,7 +29,7 @@ if "PY_ENV" in environ and environ["PY_ENV"] == "production":
 
 QUAD_WORD = None
 MODEL = None
-secrets = None
+SECRETS = None
 
 
 def _get_secrets():
@@ -41,14 +41,14 @@ def _get_secrets():
     Returns:
         dict: A dictionary containing the secrets
     """
-    secret_folder = Path('/secrets')
+    secret_folder = Path("/secrets")
 
     #: Try to get the secrets from the Cloud Function mount point
     if secret_folder.exists():
-        return json.loads(Path('/secrets/app/secrets.json').read_text(encoding='utf-8'))
+        return json.loads(Path("/secrets/app/secrets.json").read_text(encoding="utf-8"))
 
     #: Otherwise, try to load a local copy for local development
-    secret_folder = (Path(__file__).parent / 'secrets')
+    secret_folder = Path(__file__).parent / "secrets"
     if secret_folder.exists():
         return json.loads((secret_folder / 'secrets.json').read_text(encoding='utf-8'))
 
@@ -78,13 +78,13 @@ def download_tiles(col, row):
     Returns:
         cv2_images (list): list of cv2 images
     """
-    global secrets
+    global SECRETS
 
     if secrets is None:
         logging.info('loading secrets')
         secrets = SimpleNamespace(**_get_secrets())
     
-    BASE_URL = f"https://discover.agrc.utah.gov/login/path/{secrets.QUAD_WORD}/tiles/utah/20"
+    BASE_URL = f"https://discover.agrc.utah.gov/login/path/{SECRETS.QUAD_WORD}/tiles/utah/20"
     col_num = int(col)
     row_num = int(row)
 
