@@ -1,3 +1,6 @@
+secrets.py
+secrets.json
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -127,3 +130,14 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+data/
+mosaics/
+tiles/
+results/
+runs/
+
+yolov5/
+
+# PyTorch model weight file
+*.pt
