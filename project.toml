@@ -1,0 +1,6 @@
+[project]
+id = "dhhs-cooling-towers"
+name = "dhhs-cooling-towers"
+version = "1.0.0"
+authors = ["sgourley@utah.gov", "eneemann@utah.gov"]
+license = "MIT"
