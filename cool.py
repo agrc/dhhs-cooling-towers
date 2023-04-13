@@ -83,47 +83,35 @@ def reorder_colors_to_rgb(image):
     return cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
 
 
-def retry(worker_method, *args):
-    """Allows you to retry a function/method three times to overcome network jitters
-
-    Retries worker_method three times (for a total of four tries, including the initial attempt), pausing 2^trycount
-    seconds between each retry. Any arguments for worker_method can be passed in as additional parameters to retry()
-    following worker_method: retry(foo_method, arg1, arg2, keyword_arg=3)
+def _get_retry_session():
+    """create a requests session that has a retry built into it
 
     Args:
-        worker_method (callable): The name of the method to be retried (minus the calling parens)
+        None
 
     Raises:
         error: The final error that causes worker_method to fail after 3 retries
 
     Returns:
-        various: The value(s) returned by worked_method
+        session: a new session
     """
-    tries = 1
-    max_tries = 3
-    delay = 2  #: in seconds
+    retries = 3
+    backoff_factor = 0.3
+    status_forcelist = (500, 502, 504)
 
-    #: this inner function (closure? almost-closure?) allows us to keep track of tries without passing it as an arg
-    def _inner_retry(worker_method, *args):
-        nonlocal tries
+    new_session = requests.Session()
 
-        try:
-            return worker_method(*args)
+    retry = Retry(
+        total=retries,
+        read=retries,
+        connect=retries,
+        backoff_factor=backoff_factor,
+        status_forcelist=status_forcelist,
+    )
+    adapter = HTTPAdapter(max_retries=retry)
+    new_session.mount("https://", adapter)
 
-        #: general exception
-        except Exception as error:
-            if tries <= max_tries:  # pylint: disable=no-else-return
-                wait_time = delay**tries
-                logging.debug(
-                    'Exception "%s" thrown on "%s". Retrying after %s seconds...', error, worker_method, wait_time
-                )
-                sleep(wait_time)
-                tries += 1
-                return _inner_retry(worker_method, *args)
-            else:
-                raise error
-
-    return _inner_retry(worker_method, *args)
+    return new_session
 
 
 def get_tile(url):
