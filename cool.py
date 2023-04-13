@@ -131,23 +131,31 @@ def get_tile(url):
         dict: The 'results' dictionary of the response json (location, score, and matchAddress)
     """
 
-    response = requests.get(url, timeout=5)
+    session = _get_retry_session()
 
-    #: the server times out and doesn't respond
+    try:
+        response = session.get(url, timeout=5)
+        response.raise_for_status()  #: raise an exception if the status code is not 200 OK
+    except requests.exceptions.Timeout:
+        #: timeout occurred
+        logging.debug("Timeout error occurred")
+
+        return None
+
+    except requests.exceptions.RequestException as e:
+        #: other error occurred
+        logging.debug("Error occurred: %s", e)
+
+        return None
+
+    #: the server times out and doesn't respond...is this needed??
     if response is None:
         logging.debug("GET call did not return a response")
         raise RuntimeError("No response from GET; request timeout?")
 
     #: the tile request is successful
     if response.status_code == 200:
-        return response
-
-    #: the tile request fails
-    if response.status_code == 404:
-        return None
-
-    #: if we haven't returned, raise an error to trigger _retry
-    raise RuntimeError(f"Did not receive a valid tile download response; status code: {response.status_code}")
+        return response.content
 
 
 def download_tiles(col, row, out_dir):
@@ -184,7 +192,7 @@ def download_tiles(col, row, out_dir):
     #: make requests for each url/tile in the url list
     tile_list = []
     for url in urls:
-        tile_list.append(retry(get_tile, url).content)
+        tile_list.append(get_tile(url))
 
     if not all(tile_list):
         logging.debug("at least one tile failed to download; aborting...")
