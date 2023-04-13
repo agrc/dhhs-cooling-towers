@@ -63,6 +63,11 @@ def main():
         image = Path(args["<file_name>"])
         results = cool.detect_towers(image)
 
+        if not results:
+            print("no image available")
+
+            return
+
         results.print()
 
         if args["--locate-results"]:
@@ -86,6 +91,11 @@ def main():
         mosaic_image = cool.build_mosaic_image(tiles, col, row, output_directory)
 
         results = cool.detect_towers(mosaic_image)
+
+        if not results:
+            print("no image available")
+
+            return
 
         results.print()
 

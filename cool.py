@@ -241,7 +241,7 @@ def build_mosaic_image(tiles, col, row, out_dir):
     if tiles is None or len(tiles) == 0:
         logging.info("no images to mosaic for %s", tile_name)
 
-        return np.array(None)
+        return None
 
     #: Set up parameters for images, mosaic, number of cols/rows (every image will be 256x256)
     tile_width = 256
@@ -331,6 +331,10 @@ def detect_towers(image):
     Returns:
         result (obj): pytorch result object
     """
+    if image is None:
+        logging.info("no image to detect towers on: %s", type(image))
+        return None
+
     towerscout_model = _get_model()
 
     logging.info("detect is working with %s", type(image))
