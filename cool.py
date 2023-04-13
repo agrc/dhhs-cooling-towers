@@ -20,6 +20,8 @@ import numpy as np
 import pyproj
 import requests
 import torch
+from requests.adapters import HTTPAdapter
+from urllib3.util.retry import Retry
 
 if "PY_ENV" in environ and environ["PY_ENV"] == "production":
     LOGGING_CLIENT = google.cloud.logging.Client()
