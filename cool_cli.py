@@ -101,7 +101,7 @@ def main():
 
         results_df = cool.locate_results(results, col, row)
 
-        print(results_df.head().to_string())
+        print(results_df.sort_values(by=['confidence'], ascending=True).head(20).to_string())
 
         return
 
