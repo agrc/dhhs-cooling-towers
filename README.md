@@ -3,7 +3,7 @@ Tools to extract cooling tower locations from aerial imagery
 
 ## To work with the CLI locally
 
-1. Download the PyTorch model weights file
+1. Download the PyTorch model weights file and place in the `tower_scout` directory
    - Add URL
 1. Clone YOLOv5 repository from parent directory 
    
