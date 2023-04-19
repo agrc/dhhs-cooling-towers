@@ -351,6 +351,25 @@ def detect_towers(image):
 
     towerscout_model = _get_model()
 
+    #: adjust model confidence threshold for accepting a detection
+    #: model.conf - range of values is 0 to 1
+    #: lower values mean that more detections are allowed into the results
+    #: default value is 0.25, but we've noticed it missing some cooling towers
+    #: 0.005 gets more, but 0.007 seems to be a decent distinguishing value
+    #: we want to detect more than necessary, we can always weed out bad ones with a query later
+    logging.debug("initial model confidence threshold: %s", towerscout_model.conf)
+    towerscout_model.conf = 0.007
+    logging.debug("adjusted model confidence threshold: %s", towerscout_model.conf)
+
+    #: adjust model overlap threshold for accepting a detection (higher means more detections)
+    #: model.iou - range of values is 0 to 1
+    #: higher values mean greater overlap is allowed (more detections)
+    #: lower values mean more spacing is required between detections (fewer detections)
+    #: we want lower, so the same tower isn't detected multiple times
+    logging.debug("initial model confidence threshold: %s", towerscout_model.iou)
+    towerscout_model.iou = 0.25
+    logging.debug("adjusted model confidence threshold: %s", towerscout_model.iou)
+
     logging.info("detect is working with %s", type(image))
 
     if isinstance(image, np.ndarray):
