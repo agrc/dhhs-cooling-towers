@@ -386,8 +386,13 @@ def locate_results(results, col, row):
     zoom_level = 20
 
     #: get upper-left coordinates of the primary tile (upper-left tile)
-    tile = mercantile.ul(int(col), int(row), zoom_level)
-
+    try:
+        tile = mercantile.ul(int(col), int(row), zoom_level)
+    except ValueError as error:
+        logging.error("error getting tile coordinates on %s, %s: %s", col, row, error, exc_info=True)
+        
+        return results_df
+        
     #: calculate centroid in pixels
     results_df["x_centroid_px"] = (results_df["xmin"] + results_df["xmax"]) / 2
     results_df["y_centroid_px"] = (results_df["ymin"] + results_df["ymax"]) / 2
