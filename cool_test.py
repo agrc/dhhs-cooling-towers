@@ -52,6 +52,20 @@ def test_build_mosaic_image():
     row = "394029"
     tiles = cool.download_tiles(col, row, None)
 
+    assert len(tiles) == 4
+
+    mosaic = cool.build_mosaic_image(tiles, col, row, None)
+
+    assert mosaic.shape == (512, 512, 3)
+
+
+def test_build_mosaic_image_integers():
+    col = 198263
+    row = 394029
+    tiles = cool.download_tiles(col, row, None)
+
+    assert len(tiles) == 4
+
     mosaic = cool.build_mosaic_image(tiles, col, row, None)
 
     assert mosaic.shape == (512, 512, 3)
