@@ -155,7 +155,7 @@ def get_tile(url):
 
     #: the tile request is successful
     if response.status_code == 200:
-        return response.content
+        return response
 
 
 def download_tiles(col, row, out_dir):
@@ -192,7 +192,7 @@ def download_tiles(col, row, out_dir):
     #: make requests for each url/tile in the url list
     tile_list = []
     for url in urls:
-        tile_list.append(get_tile(url))
+        tile_list.append(get_tile(url).content)
 
     if not all(tile_list):
         logging.debug("at least one tile failed to download; aborting...")
