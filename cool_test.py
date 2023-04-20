@@ -80,11 +80,11 @@ def test_get_tile_good_request():
 
 def test_get_tile_malformed_request():
     
-    url = f"{BASE_URL}_bad/{198263}/{394029}"
+    url = f"{BASE_URL}/bad_{198263}/{394029}"
     print(url)
     response = cool.get_tile(url)
 
-    assert response.status_code == 200
+    assert response is None
 
 
 def test_get_tile_bad_url():
