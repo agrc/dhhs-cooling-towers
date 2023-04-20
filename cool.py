@@ -301,21 +301,23 @@ def load_pytorch_model():
     yolov5_path = Path(__file__).parent / "yolov5"
 
     if not model_weight_path.is_file():
-        logging.warning("the model weights file does not exist: %s", model_weight_path)
+        logging.error("the model weights file does not exist: %s", model_weight_path)
 
-        return None
+        raise FileNotFoundError("the model weights file does not exist")
     
     if not yolov5_path.is_dir():
-        logging.warning("the yolov5 directory does not exist, was it cloned? %s", yolov5_path)
+        logging.error("the yolov5 directory does not exist, was it cloned? %s", yolov5_path)
 
-        return None
+        raise FileNotFoundError("the yolov5 directory does not exist")
 
     try:
         model = torch.hub.load(str(yolov5_path), "custom", path=str(model_weight_path), source="local")
     except Exception as ex:
-        logging.warning("the tower scout yolo model failed to load: %s", ex)
+        logging.error("the tower scout yolo model failed to load: %s", ex)
 
-    
+        raise ex
+
+
     return model
 
 
