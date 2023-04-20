@@ -459,6 +459,30 @@ def locate_results(results, col, row):
     return results_df
 
 
+def append_results(results_df):
+    """append results dataframe into bigquery results table
+
+    Args:
+        results_df (dataframe): dataframe with cooling tower detection results
+
+    Returns:
+        None
+    """
+    table_id = f'{PROJECT_ID}.output_data.cooling_tower_results'
+    
+    #: specify the type of columns whose type cannot be auto-detected. For 
+    #: the "name" column uses pandas dtype "object", so it is ambiguous.
+    job_config = bigquery.LoadJobConfig(
+        schema=[bigquery.SchemaField("name", bigquery.enums.SqlTypeNames.STRING)],
+        write_disposition="WRITE_APPEND", 
+        ) 
+        
+    job = BIGQUERY_CLIENT.load_table_from_dataframe(results_df, table_id, job_config=job_config, location="US") 
+    job.result()  # Waits for table load to complete.
+    
+    return 
+
+
 def format_time(seconds):
     """seconds: number
     returns a human-friendly string describing the amount of time
