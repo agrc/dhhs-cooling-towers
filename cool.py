@@ -15,6 +15,7 @@ from types import SimpleNamespace
 import cv2
 import google.cloud.logging
 import google.cloud.storage
+import google.cloud.bigquery as bigquery
 import mercantile
 import numpy as np
 import pyproj
@@ -23,15 +24,24 @@ import torch
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 
+#: temp for testing
+environ['PY_ENV'] = 'test'
+
 if "PY_ENV" in environ and environ["PY_ENV"] == "production":
     LOGGING_CLIENT = google.cloud.logging.Client()
     STORAGE_CLIENT = google.cloud.storage.Client()
+    BIGQUERY_CLIENT = bigquery.Client()
 
     LOGGING_CLIENT.setup_logging()
+elif "PY_ENV" in environ and environ["PY_ENV"] == "test":
+    STORAGE_CLIENT = google.cloud.storage.Client()
+    BIGQUERY_CLIENT = bigquery.Client()
 
 QUAD_WORD = None
 MODEL = None
 SECRETS = None
+
+PROJECT_ID = 'ut-dts-agrc-dhhs-towers-dev'
 
 
 def _get_secrets():
@@ -81,6 +91,20 @@ def reorder_colors_to_rgb(image):
     """
 
     return cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+
+
+def get_rows_from_gbq(skip, take):
+    # Perform a query.
+    sql = f"""
+    SELECT * FROM `{PROJECT_ID}.indices.images_within_habitat` 
+    WHERE processed = false 
+    LIMIT {take} OFFSET {skip}
+    """
+    
+    query_job = BIGQUERY_CLIENT.query(sql)  # API request
+    rows = query_job.result()  # Waits for query to finish
+
+    return rows
 
 
 def _get_retry_session():
