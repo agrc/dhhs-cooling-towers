@@ -94,15 +94,25 @@ def reorder_colors_to_rgb(image):
 
 
 def get_rows_from_gbq(skip, take):
-    # Perform a query.
+    """grab rows to process from bigquery indices table
+
+    Args:
+        skip (string): the number of leading rows to skip
+        take (string): the number of rows to get form the table
+
+    Returns:
+        rows (iterator): big query row iterator
+    """
+    #: create sql query with skip/take for unprocessed rows
     sql = f"""
     SELECT * FROM `{PROJECT_ID}.indices.images_within_habitat` 
     WHERE processed = false 
     LIMIT {take} OFFSET {skip}
     """
     
-    query_job = BIGQUERY_CLIENT.query(sql)  # API request
-    rows = query_job.result()  # Waits for query to finish
+    #: perform query
+    query_job = BIGQUERY_CLIENT.query(sql)
+    rows = query_job.result()       #: waits for query to finish
 
     return rows
 
