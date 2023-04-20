@@ -8,4 +8,5 @@ opencv-python>=4.1.1
 requests>=2.23.0
 torch>=1.7.0  # see https://pytorch.org/get-started/locally (recommended)
 mercantile>=1.2.1
+pyarrow==11.*
 pyproj>=3.5.0
