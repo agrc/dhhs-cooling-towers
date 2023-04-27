@@ -281,7 +281,12 @@ def download_tiles(col, row, out_dir):
     #: make requests for each url/tile in the url list
     tile_list = []
     for url in urls:
-        tile_list.append(get_tile(url).content)
+        tile = get_tile(url)
+
+        if tile is None:
+            continue
+
+        tile_list.append(tile.content)
 
     if not all(tile_list):
         logging.debug("at least one tile failed to download; aborting...")
