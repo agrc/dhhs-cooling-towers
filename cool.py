@@ -334,7 +334,7 @@ def load_pytorch_model():
         logging.error("the model weights file does not exist: %s", model_weight_path)
 
         raise FileNotFoundError("the model weights file does not exist")
-    
+
     if not yolov5_path.is_dir():
         logging.error("the yolov5 directory does not exist, was it cloned? %s", yolov5_path)
 
@@ -346,7 +346,6 @@ def load_pytorch_model():
         logging.error("the tower scout yolo model failed to load: %s", ex)
 
         raise ex
-
 
     return model
 
@@ -391,7 +390,7 @@ def detect_towers(image):
     #: we want to detect more than necessary, we can always weed out bad ones with a query later
     logging.debug("initial model confidence threshold: %s", towerscout_model.conf)
     towerscout_model.conf = 0.007
-    logging.debug("adjusted model confidence threshold: %s", towerscout_model.conf)
+    logging.info("adjusted model confidence threshold: %s", towerscout_model.conf)
 
     #: adjust model overlap threshold for accepting a detection (higher means more detections)
     #: model.iou - range of values is 0 to 1
