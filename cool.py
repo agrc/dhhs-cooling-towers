@@ -98,12 +98,14 @@ def get_rows_from_gbq(skip, take):
         rows (iterator): big query row iterator
     """
     #: create sql query with skip/take for unprocessed rows
+    #: order by row, col ascending to ensure consistent processing order
     sql = f"""
     SELECT * FROM `{PROJECT_ID}.indices.images_within_habitat` 
-    WHERE processed = false 
+    WHERE processed = false
+    ORDER BY row_num, col_num
     LIMIT {take} OFFSET {skip}
     """
-    
+
     #: perform query
     query_job = BIGQUERY_CLIENT.query(sql)
     rows = query_job.result()  #: waits for query to finish
