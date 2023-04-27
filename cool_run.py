@@ -22,22 +22,22 @@ logging.basicConfig(
 #: Set up variables
 JOB_NAME = getenv("JOB_NAME")
 TASK_INDEX = int(getenv("CLOUD_RUN_TASK_INDEX") or 0)
+TASK_SIZE = int(getenv("JOB_SIZE") or 0)
 
 
-def mosaic_all_circles():
-    """the main function to execute when cloud run starts the circle detection job"""
+def process_all_tiles():
+    """the main function to execute when cloud run starts the cooling tower detection job"""
 
     job_start = perf_counter()
 
-    cool.mosaic_all_circles(JOB_NAME, BUCKET_NAME, OUTPUT_BUCKET_NAME, INDEX, TASK_INDEX, TASK_COUNT, TOTAL_FILES)
+    cool.process_all_tiles(JOB_NAME, TASK_INDEX, TASK_SIZE)
 
     logging.info(
-        "job name: %s task %i: entire job %s",
+        "job name: %s finished entire job in: %s",
         JOB_NAME,
-        TASK_INDEX,
         cool.format_time(perf_counter() - job_start),
     )
 
 
 if __name__ == "__main__":
-    run()
+    process_all_tiles()
