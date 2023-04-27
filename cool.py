@@ -7,7 +7,7 @@ Cooling tower module containing methods
 import json
 import logging
 import math
-from os import getenv
+from os import environ, getenv
 from pathlib import Path
 from time import perf_counter
 from types import SimpleNamespace
