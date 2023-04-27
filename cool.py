@@ -248,7 +248,7 @@ def get_tile(url):
 
 
 def download_tiles(col, row, out_dir):
-    """downloads image at specified col/row and each neigbor to the right, down, and right-down,
+    """downloads image at specified col/row and each neighbor to the right, down, and right-down,
     then converts them to cv2 images and returns the list
 
     Args:
@@ -402,7 +402,7 @@ def load_pytorch_model():
     try:
         model = torch.hub.load(str(yolov5_path), "custom", path=str(model_weight_path), source="local")
     except Exception as ex:
-        logging.error("the tower scout yolo model failed to load: %s", ex)
+        logging.error("the tower scout yolov5 model failed to load: %s", ex)
 
         raise ex
 
