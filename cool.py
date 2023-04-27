@@ -24,24 +24,18 @@ import torch
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 
-#: temp for testing
-environ['PY_ENV'] = 'test'
-
 if "PY_ENV" in environ and environ["PY_ENV"] == "production":
+    logging.info("setting up production environment")
     LOGGING_CLIENT = google.cloud.logging.Client()
     STORAGE_CLIENT = google.cloud.storage.Client()
     BIGQUERY_CLIENT = bigquery.Client()
 
     LOGGING_CLIENT.setup_logging()
-elif "PY_ENV" in environ and environ["PY_ENV"] == "test":
-    STORAGE_CLIENT = google.cloud.storage.Client()
-    BIGQUERY_CLIENT = bigquery.Client()
 
 QUAD_WORD = None
 MODEL = None
 SECRETS = None
-
-PROJECT_ID = 'ut-dts-agrc-dhhs-towers-dev'
+PROJECT_ID = environ["PROJECT_ID"]
 
 
 def _get_secrets():
