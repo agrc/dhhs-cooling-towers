@@ -306,10 +306,9 @@ def download_tiles(col, row, out_dir):
 
         return tile_list
 
-    else:
-        logging.debug("no output directory provided")
+    logging.debug("no output directory provided")
 
-        return tile_list
+    return tile_list
 
 
 def build_mosaic_image(tiles, col, row, out_dir):
@@ -371,10 +370,9 @@ def build_mosaic_image(tiles, col, row, out_dir):
 
         return mosaic_image
 
-    else:
-        logging.debug("no output directory provided")
+    logging.debug("no output directory provided")
 
-        return mosaic_image
+    return mosaic_image
 
 
 def load_pytorch_model():
