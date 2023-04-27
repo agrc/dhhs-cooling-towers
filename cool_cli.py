@@ -5,7 +5,7 @@ DHHS Cooling Tower object detection
 
 Usage:
     cool_cli.py download-tiles <col> <row> [--save-to=location --mosaic]
-    cool_cli.py detect-towers <file_name> [(--locate-results <col> <row>)] 
+    cool_cli.py detect-towers <file_name> [(--locate-results <col> <row>)]
     cool_cli.py process-tiles <col> <row> [--save-to=location]
     cool_cli.py process-upload <skip> <take>
 
@@ -104,10 +104,9 @@ def main():
 
         results_df = cool.locate_results(results, col, row)
 
-        print(results_df.sort_values(by=['confidence'], ascending=True).head(20).to_string())
+        print(results_df.sort_values(by=["confidence"], ascending=True).head(20).to_string())
 
         return
-
 
     if args["process-upload"]:
         output_directory = None
@@ -132,16 +131,17 @@ def main():
             results_df = cool.locate_results(results, row.col_num, row.row_num)
 
             if len(results_df.index) == 0:
-                print('no results to upload')
+                print("no results to upload")
 
                 continue
 
             cool.append_results(results_df)
-            print('appended results for col: {row.col_num} row: {row.row_num} ')
+            print("appended results for col: {row.col_num} row: {row.row_num} ")
 
-            print(results_df.sort_values(by=['confidence'], ascending=True).head(20).to_string())
-        
+            print(results_df.sort_values(by=["confidence"], ascending=True).head(20).to_string())
+
         return
+
 
 if __name__ == "__main__":
     main()
