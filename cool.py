@@ -488,6 +488,31 @@ def append_results(results_df):
     return
 
 
+def update_index(col, row):
+    """update the `images_within_habitat` table in bigquery after a row is processed
+
+    Args:
+        col (str): the column of the WMTS index for the tile of interest (top-left tile)
+        row (str): the row of the WMTS index for the tile of interest (top-left tile)
+
+    Returns:
+        None
+    """
+    table_id = f"{PROJECT_ID}.indices.images_within_habitat"
+
+    #: create dml statement to update specific row
+    dml = f"""
+    UPDATE `{table_id}` 
+    SET processed = true
+    WHERE col_num = {col} AND row_num = {row} 
+    """
+
+    query = BIGQUERY_CLIENT.query(dml)
+    query.result()  # Waits for update to complete.
+
+    return
+
+
 def format_time(seconds):
     """seconds: number
     returns a human-friendly string describing the amount of time
