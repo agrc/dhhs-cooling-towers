@@ -23,6 +23,7 @@ def test_download_tiles_calls_get_tile_with_correct_urls(mock_get_secrets, mock_
 
     tiles = cool.download_tiles("1", "2", None)
 
+    assert tiles is not None
     assert len(tiles) == 4
     assert mock_get_tile.call_count == 4
 
@@ -45,6 +46,7 @@ def test_build_mosaic_image():
 
     actual_mosaic = cool.build_mosaic_image(tiles, col, row, None)
 
+    assert actual_mosaic is not None
     assert actual_mosaic.shape == (512, 512, 3)
     assert actual_mosaic[127, 127, 0] == expected_mosaic[127, 127, 0]
     assert actual_mosaic[127, 384, 1] == expected_mosaic[127, 384, 1]
@@ -56,7 +58,11 @@ def test_build_mosaic_image():
 def test_detect_towers_finds_correct_number_of_towers(input, expected):
     file_name = root / input
 
-    results_df = cool.detect_towers(file_name).pandas().xyxy[0]
+    result = cool.detect_towers(file_name)
+
+    assert result is not None
+
+    results_df = result.pandas().xyxy[0]
 
     assert len(results_df.index) == expected
 
