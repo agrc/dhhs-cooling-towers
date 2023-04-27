@@ -73,13 +73,13 @@ def process_all_tiles(job_name, task_index, task_size):
         None
     """
 
-    logging.info("job name: %s task: %i getting rows from bigquery", job_name, task_index)
-    rows = get_rows_from_gbq(skip, take)
-
     #: calculate the number of rows to skip/take from the bigquery table
     #: assumes a static job_size environment variable is passed in, not calculated dynamically
     skip = task_index * task_size
     take = task_size
+
+    logging.info("job name: %s task: %i getting rows from bigquery", job_name, task_index)
+    rows = get_rows_from_gbq(skip, take)
 
     for row in rows:
         row_start = perf_counter()
