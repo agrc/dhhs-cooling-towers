@@ -157,7 +157,7 @@ def get_rows_from_gbq(skip, take):
     #: create sql query with skip/take for unprocessed rows
     #: order by row, col ascending to ensure consistent processing order
     sql = f"""
-    SELECT * FROM `{PROJECT_ID}.indices.images_within_habitat` 
+    SELECT * FROM `{PROJECT_ID}.indices.images_within_habitat`
     WHERE processed = false
     ORDER BY row_num, col_num
     LIMIT {take} OFFSET {skip}
@@ -559,9 +559,9 @@ def update_index(col, row):
 
     #: create dml statement to update specific row
     dml = f"""
-    UPDATE `{table_id}` 
+    UPDATE `{table_id}`
     SET processed = true
-    WHERE col_num = {col} AND row_num = {row} 
+    WHERE col_num = {col} AND row_num = {row}
     """
 
     query = BIGQUERY_CLIENT.query(dml)
