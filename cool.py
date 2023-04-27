@@ -542,8 +542,6 @@ def append_results(results_df):
     job = BIGQUERY_CLIENT.load_table_from_dataframe(results_df, table_id, job_config=job_config, location="US")
     job.result()  # Waits for table load to complete.
 
-    return
-
 
 def update_index(col, row):
     """update the `images_within_habitat` table in bigquery after a row is processed
@@ -566,8 +564,6 @@ def update_index(col, row):
 
     query = BIGQUERY_CLIENT.query(dml)
     query.result()  # Waits for update to complete.
-
-    return
 
 
 def format_time(seconds):
