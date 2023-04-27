@@ -244,6 +244,8 @@ def get_tile(url):
     if response.status_code == 200:
         return response
 
+    return None
+
 
 def download_tiles(col, row, out_dir):
     """downloads image at specified col/row and each neigbor to the right, down, and right-down,
