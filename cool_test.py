@@ -1,110 +1,73 @@
 #!/usr/bin/env python
 # * coding: utf8 *
 """
-test_cool.py
+cool_test.py
 A module that contains tests for the project module.
 """
 
-import json
 from pathlib import Path
-from types import SimpleNamespace
+from unittest import mock
+
+import pytest
+import requests
 
 import cool
 
 root = Path(__file__).parent / "test-data"
 
 
-def _get_secrets():
-    """load secrets for use in the program
+@mock.patch("cool.get_tile")
+@mock.patch("cool._get_secrets")
+def test_download_tiles_calls_get_tile_with_correct_urls(mock_get_secrets, mock_get_tile):
+    mock_get_secrets.return_value = {"QUAD_WORD": "test_string"}
 
-    Args:
-        None
-
-    Returns:
-        dict: A dictionary containing the secrets
-    """
-    secret_folder = Path("/secrets")
-
-    #: Try to get the secrets from the Cloud Function mount point
-    if secret_folder.exists():
-        return json.loads(Path("/secrets/app/secrets.json").read_text(encoding="utf-8"))
-
-    #: Otherwise, try to load a local copy for local development
-    secret_folder = Path(__file__).parent / "secrets"
-    if secret_folder.exists():
-        return json.loads((secret_folder / "secrets.json").read_text(encoding="utf-8"))
-
-    raise FileNotFoundError("Secrets folder not found; secrets not loaded.")
-
-
-SECRETS = SimpleNamespace(**_get_secrets())
-BASE_URL = f"https://discover.agrc.utah.gov/login/path/{SECRETS.QUAD_WORD}/tiles/utah/20"
-
-
-def test_download_tiles():
-    tiles = cool.download_tiles("198263", "394029", None)
+    tiles = cool.download_tiles("1", "2", None)
 
     assert len(tiles) == 4
+    assert mock_get_tile.call_count == 4
+
+    calls = [
+        mock.call("https://discover.agrc.utah.gov/login/path/test_string/tiles/utah/20/1/2"),
+        mock.call("https://discover.agrc.utah.gov/login/path/test_string/tiles/utah/20/2/2"),
+        mock.call("https://discover.agrc.utah.gov/login/path/test_string/tiles/utah/20/1/3"),
+        mock.call("https://discover.agrc.utah.gov/login/path/test_string/tiles/utah/20/2/3"),
+    ]
+    mock_get_tile.assert_has_calls(calls)
 
 
 def test_build_mosaic_image():
-    col = "198263"
-    row = "394029"
-    tiles = cool.download_tiles(col, row, None)
+    col = "1"
+    row = "2"
+    test_data = ["1_2", "2_2", "1_3", "2_3"]
+    tiles = [(root / f"{name}.jpg").read_bytes() for name in test_data]
 
-    assert len(tiles) == 4
+    expected_mosaic = cool.convert_to_cv2_image((root / f"1_2_mosaic.jpg").read_bytes())
 
-    mosaic = cool.build_mosaic_image(tiles, col, row, None)
+    actual_mosaic = cool.build_mosaic_image(tiles, col, row, None)
 
-    assert mosaic.shape == (512, 512, 3)
-
-
-def test_build_mosaic_image_integers():
-    col = 198263
-    row = 394029
-    tiles = cool.download_tiles(col, row, None)
-
-    assert len(tiles) == 4
-
-    mosaic = cool.build_mosaic_image(tiles, col, row, None)
-
-    assert mosaic.shape == (512, 512, 3)
+    assert actual_mosaic.shape == (512, 512, 3)
+    assert actual_mosaic[127, 127, 0] == expected_mosaic[127, 127, 0]
+    assert actual_mosaic[127, 384, 1] == expected_mosaic[127, 384, 1]
+    assert actual_mosaic[384, 127, 2] == expected_mosaic[384, 127, 2]
+    assert actual_mosaic[384, 384, 1] == expected_mosaic[384, 384, 1]
 
 
-def test_detect_towers():
-    file_name = root / "mosaic_198263_394029.jpg"
+@pytest.mark.parametrize("input,expected", [("1_2_mosaic.jpg", 10), ("no_towers.jpg", 0)])
+def test_detect_towers_finds_correct_number_of_towers(input, expected):
+    file_name = root / input
 
     results_df = cool.detect_towers(file_name).pandas().xyxy[0]
 
-    print(f'length of results df is: {len(results_df.index)}')
-
-    assert results_df.empty is False
-    assert(len(results_df.index) > 0) is True
+    assert len(results_df.index) == expected
 
 
-def test_get_tile_good_request():
-    
-    url = f"{BASE_URL}/{198263}/{394029}"
-    print(url)
-    response = cool.get_tile(url)
+@mock.patch("cool._get_retry_session")
+def test_get_tile_bad_url(session_mock):
+    response_mock = mock.Mock()
+    response_mock.raise_for_status.return_value = mock.Mock(side_effect=requests.exceptions.RequestException)
+    session_mock.get.return_value = response_mock
 
-    assert response is not None
-    assert response.status_code == 200
-
-
-def test_get_tile_malformed_request():
-    
-    url = f"{BASE_URL}/bad_{198263}/{394029}"
-    print(url)
-    response = cool.get_tile(url)
-
-    assert response is None
-
-
-def test_get_tile_bad_url():
-    
     url = f"https://fake_bad_url.madeup/198263/394029"
-    print(url)
     response = cool.get_tile(url)
 
     assert response is None
