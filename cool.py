@@ -61,6 +61,63 @@ def _get_secrets():
     raise FileNotFoundError("Secrets folder not found; secrets not loaded.")
 
 
+def process_all_tiles(job_name, task_index, task_size):
+    """the code to run in the cloud run job that will run the full processing chain
+
+    Args:
+        job_name (str): the name of the run job. typically named after an animal in alphabetical order
+        task_index (int): the index of the task running
+        job_size (int): the number of index rows for a specific task to process
+
+    Returns:
+        None
+    """
+
+    logging.info("job name: %s task: %i getting rows from bigquery", job_name, task_index)
+    rows = get_rows_from_gbq(skip, take)
+
+    #: calculate the number of rows to skip/take from the bigquery table
+    #: assumes a static job_size environment variable is passed in, not calculated dynamically
+    skip = task_index * task_size
+    take = task_size
+
+    for row in rows:
+        row_start = perf_counter()
+        tiles = download_tiles(row.col_num, row.row_num, None)
+
+        mosaic_image = build_mosaic_image(tiles, row.col_num, row.row_num, None)
+
+        results = detect_towers(mosaic_image)
+
+        if not results:
+            logging.info("no image available")
+
+            continue
+
+        results_df = locate_results(results, row.col_num, row.row_num)
+
+        if len(results_df.index) == 0:
+            logging.info("no results to upload")
+
+            continue
+
+        logging.info(results_df.sort_values(by=["confidence"], ascending=True).head(20).to_string())
+        logging.info("appending results for col: %i row: %i", row.col_num, row.row_num)
+
+        append_results(results_df)
+
+        logging.info("updating index to 'processed' results for col: %i row: %i", row.col_num, row.row_num)
+
+        update_index(row.col_num, row.row_num)
+
+        logging.info(
+            "index col: %i row: %i processing finished in: %s",
+            row.col_num,
+            row.row_num,
+            format_time(perf_counter() - row_start),
+        )
+
+
 def convert_to_cv2_image(image):
     """convert image (bytes) to a cv2 image object
 
