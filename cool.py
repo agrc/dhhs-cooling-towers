@@ -35,7 +35,7 @@ if "PY_ENV" in environ and environ["PY_ENV"] == "production":
 QUAD_WORD = None
 MODEL = None
 SECRETS = None
-PROJECT_ID = environ["PROJECT_ID"]
+PROJECT_ID = getenv("PROJECT_ID")
 
 
 def _get_secrets():
