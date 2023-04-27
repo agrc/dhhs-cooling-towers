@@ -9,13 +9,13 @@ import logging
 import math
 from os import environ
 from pathlib import Path
-from time import perf_counter, sleep
+from time import perf_counter
 from types import SimpleNamespace
 
 import cv2
+import google.cloud.bigquery as bigquery
 import google.cloud.logging
 import google.cloud.storage
-import google.cloud.bigquery as bigquery
 import mercantile
 import numpy as np
 import pyproj
