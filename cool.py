@@ -229,9 +229,9 @@ def get_tile(url):
 
         return None
 
-    except requests.exceptions.RequestException as e:
+    except requests.exceptions.RequestException as error:
         #: other error occurred
-        logging.debug("Error occurred: %s", e)
+        logging.debug("Error occurred: %s", error)
 
         return None
 
@@ -262,19 +262,19 @@ def download_tiles(col, row, out_dir):
         logging.info("loading secrets")
         SECRETS = SimpleNamespace(**_get_secrets())
 
-    BASE_URL = f"https://discover.agrc.utah.gov/login/path/{SECRETS.QUAD_WORD}/tiles/utah/20"
+    base_url = f"https://discover.agrc.utah.gov/login/path/{SECRETS.QUAD_WORD}/tiles/utah/20"
     col_num = int(col)
     row_num = int(row)
 
     urls = []
     #: build url for primary tile (top-left)
-    urls.append(f"{BASE_URL}/{col_num}/{row_num}")
+    urls.append(f"{base_url}/{col_num}/{row_num}")
     #: build url for top-right tile
-    urls.append(f"{BASE_URL}/{col_num + 1}/{row_num}")
+    urls.append(f"{base_url}/{col_num + 1}/{row_num}")
     #: build url for bottom-left tile
-    urls.append(f"{BASE_URL}/{col_num}/{row_num + 1}")
+    urls.append(f"{base_url}/{col_num}/{row_num + 1}")
     #: build url for bottom-right tile
-    urls.append(f"{BASE_URL}/{col_num + 1}/{row_num + 1}")
+    urls.append(f"{base_url}/{col_num + 1}/{row_num + 1}")
 
     #: make requests for each url/tile in the url list
     tile_list = []
