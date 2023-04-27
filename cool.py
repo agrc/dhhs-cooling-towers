@@ -106,7 +106,7 @@ def get_rows_from_gbq(skip, take):
     
     #: perform query
     query_job = BIGQUERY_CLIENT.query(sql)
-    rows = query_job.result()       #: waits for query to finish
+    rows = query_job.result()  #: waits for query to finish
 
     return rows
 
@@ -439,9 +439,9 @@ def locate_results(results, col, row):
         tile = mercantile.ul(int(col), int(row), zoom_level)
     except ValueError as error:
         logging.error("error getting tile coordinates on %s, %s: %s", col, row, error, exc_info=True)
-        
+
         return results_df
-        
+
     #: calculate centroid in pixels
     results_df["x_centroid_px"] = (results_df["xmin"] + results_df["xmax"]) / 2
     results_df["y_centroid_px"] = (results_df["ymin"] + results_df["ymax"]) / 2
@@ -472,19 +472,19 @@ def append_results(results_df):
     Returns:
         None
     """
-    table_id = f'{PROJECT_ID}.output_data.cooling_tower_results'
-    
-    #: specify the type of columns whose type cannot be auto-detected. For 
+    table_id = f"{PROJECT_ID}.output_data.cooling_tower_results"
+
+    #: specify the type of columns whose type cannot be auto-detected. For
     #: the "name" column uses pandas dtype "object", so it is ambiguous.
     job_config = bigquery.LoadJobConfig(
         schema=[bigquery.SchemaField("name", bigquery.enums.SqlTypeNames.STRING)],
-        write_disposition="WRITE_APPEND", 
-        ) 
-        
-    job = BIGQUERY_CLIENT.load_table_from_dataframe(results_df, table_id, job_config=job_config, location="US") 
+        write_disposition="WRITE_APPEND",
+    )
+
+    job = BIGQUERY_CLIENT.load_table_from_dataframe(results_df, table_id, job_config=job_config, location="US")
     job.result()  # Waits for table load to complete.
-    
-    return 
+
+    return
 
 
 def format_time(seconds):
