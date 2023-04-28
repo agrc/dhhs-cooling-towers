@@ -545,7 +545,18 @@ def append_results(results_df):
     )
 
     job = BIGQUERY_CLIENT.load_table_from_dataframe(results_df, table_id, job_config=job_config, location="US")
-    job.result()  # Waits for table load to complete.
+   
+    try:
+        job_result = job.result()  # Waits for table load to complete.
+    except Exception as ex:
+        logging.error("unable to append rows into the results table! %s", ex)
+
+        return
+
+    if job_result.total_rows == 0:
+        logging.warning("no rows were appended into the results table!")
+
+    logging.info("rows append into the results table: %i", job_result.total_rows)
 
 
 def update_index(col, row):
@@ -568,7 +579,18 @@ def update_index(col, row):
     """
 
     query = BIGQUERY_CLIENT.query(dml)
-    query.result()  # Waits for update to complete.
+
+    try:
+        query_result = query.result()  # Waits for update to complete.
+    except Exception as ex:
+        logging.error("unable to update index on col: %i, row: %i, %s", col, row, ex)
+
+        return
+
+    if query_result.total_rows == 0:
+        logging.warning("no rows were updated in the index table!")
+
+    logging.info("rows updated in the index table: %i", query_result.total_rows)
 
 
 def format_time(seconds):
