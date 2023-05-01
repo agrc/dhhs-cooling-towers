@@ -551,6 +551,11 @@ def append_results(results_df):
     except Exception as ex:
         logging.error("unable to append rows into the results table! %s", ex)
 
+        errors = job.errors
+        logging.error("encountered the following errors:")
+        for error in errors:
+            logging.error(error)
+
         return
 
     if job_result.total_rows == 0:
