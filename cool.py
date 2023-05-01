@@ -104,7 +104,12 @@ def process_all_tiles(job_name, task_index, task_size):
         logging.info(results_df.sort_values(by=["confidence"], ascending=True).head(20).to_string())
         logging.info("appending results for col: %i row: %i", row.col_num, row.row_num)
 
-        append_results(results_df)
+        append_status = append_results(results_df)
+
+        if append_status != "SUCCESS":
+            logging.warning("append unsuccessful for col: %i row: %i, skipping index update", row.col_num, row.row_num)
+
+            continue
 
         logging.info("updating index to 'processed' results for col: %i row: %i", row.col_num, row.row_num)
 
@@ -562,6 +567,11 @@ def append_results(results_df):
         logging.warning("no rows were appended into the results table!")
 
     logging.info("rows append into the results table: %i", job_result.total_rows)
+
+    #: return a fresh job status
+    status = BIGQUERY_CLIENT.get_job(job.job_id).state
+    
+    return status
 
 
 def update_index(col, row):
