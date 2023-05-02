@@ -1,0 +1,10 @@
+{
+  "recommendations": [
+    "DavidAnson.vscode-markdownlint",
+    "editorconfig.editorconfig",
+    "ms-python.python",
+    "ms-python.vscode-pylance",
+    "ms-python.isort",
+    "streetsidesoftware.code-spell-checker",
+  ]
+}
