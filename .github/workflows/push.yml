@@ -25,7 +25,7 @@ jobs:
       - name: ⬇️ Checkout code
         uses: actions/checkout@v3
 
-      - name: ⬇️ Checkout model
+      - name: 🕺️ Checkout model
         uses: actions/checkout@v3
         with:
           repository: ultralytics/yolov5
@@ -44,7 +44,7 @@ jobs:
         working-directory: yolov5
 
       - name: 🏋️‍♀️ Download weights
-        run: gdown 1EBxgqr6MrkAkEv1vJ2ftZiSjs6w865wf
+        run: gdown ${{ secrets.WEIGHTS_ID }}
         working-directory: tower_scout
 
       - name: 🧪 Run tests
