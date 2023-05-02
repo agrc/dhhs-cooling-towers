@@ -25,6 +25,12 @@ jobs:
       - name: ⬇️ Checkout code
         uses: actions/checkout@v3
 
+      - name: ⬇️ Checkout model
+        uses: actions/checkout@v3
+        with:
+          repository: ultralytics/yolov5
+          path: dhhs-cooling-towers/yolov5
+
       - name: 🐍 Set up Python
         uses: actions/setup-python@v4
         with:
@@ -32,6 +38,10 @@ jobs:
 
       - name: 📥 Download dependencies
         run: pip install -r requirements.tests.txt
+
+      - name: 📥 Download model dependencies
+        run: pip install -r requirements.txt
+        working-directory: dhhs-cooling-towers/yolov5
 
       - name: 🧪 Run tests
         run: pytest
