@@ -43,6 +43,10 @@ jobs:
         run: pip install -r requirements.txt
         working-directory: dhhs-cooling-towers/yolov5
 
+      - name: 🏋️‍♀️ Download weights
+        run: gdown 1EBxgqr6MrkAkEv1vJ2ftZiSjs6w865wf
+        working-directory: dhhs-cooling-towers/tower_scout
+
       - name: 🧪 Run tests
         run: pytest
 
