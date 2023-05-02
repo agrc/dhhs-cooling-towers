@@ -21,6 +21,24 @@ jobs:
       - name: ⬇️ Checkout code
         uses: actions/checkout@v3
 
+      - name: 🕺️ Checkout model
+        uses: actions/checkout@v3
+        with:
+          repository: ultralytics/yolov5
+          path: yolov
+
+      - name: 🐍 Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.9
+
+      - name: 📥 Download dependencies
+        run: pip install gdown
+
+      - name: 🏋️‍♀️ Download weights
+        run: gdown ${{ secrets.WEIGHTS_ID }}
+        working-directory: tower_scout
+
       - name: 🗝️ Authenticate to Google Cloud
         id: auth
         uses: google-github-actions/auth@v1
