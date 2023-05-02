@@ -6,6 +6,6 @@ line_length = 120
 multi_line_output = 5
 
 [tool.pytest.ini_options]
-norecursedirs = [".env", "data", "maps", ".vscode", "yolov5"]
-addopts = "--cov-branch --cov=row --cov-report term --cov-report xml:cov.xml --instafail --isort"
+norecursedirs = [".env", "data", "maps", ".vscode", "yolov5", "tower_scout"]
+addopts = "--cov-branch --cov=cool --cov-report term --cov-report xml:cov.xml --instafail --isort"
 minversion = "7.0"
