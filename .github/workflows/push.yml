@@ -45,7 +45,7 @@ jobs:
 
       - name: 🏋️‍♀️ Download weights
         run: gdown 1EBxgqr6MrkAkEv1vJ2ftZiSjs6w865wf
-        working-directory: dhhs-cooling-towers/tower_scout
+        working-directory: tower_scout
 
       - name: 🧪 Run tests
         run: pytest
