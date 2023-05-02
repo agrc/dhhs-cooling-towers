@@ -28,6 +28,6 @@ To work with the CLI,
 
 1. Create a python environment and install the `requirements.dev.txt` into that environment
 1. Execute the CLI to see the commands and options available
-   - `python row_cli.py`
+   - `python cool_cli.py`
 
 ## Testing
