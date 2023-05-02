@@ -141,3 +141,4 @@ yolov5/
 
 # PyTorch model weight file
 *.pt
+cov.xml
