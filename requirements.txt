@@ -11,3 +11,4 @@ mercantile>=1.2.1
 pyarrow==11.*
 pyproj>=3.5.0
 gdown>=4.7.*
+-r yolov5/requirements.txt
