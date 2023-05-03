@@ -23,6 +23,8 @@ logging.basicConfig(
 JOB_NAME = getenv("JOB_NAME")
 TASK_INDEX = int(getenv("CLOUD_RUN_TASK_INDEX") or 0)
 TASK_SIZE = int(getenv("JOB_SIZE") or 0)
+SKIP = int(getenv("SKIP") or 0)
+TAKE = int(getenv("TAKE") or 0)
 
 
 def process_all_tiles():
@@ -30,7 +32,7 @@ def process_all_tiles():
 
     job_start = perf_counter()
 
-    cool.process_all_tiles(JOB_NAME, TASK_INDEX, TASK_SIZE)
+    cool.process_all_tiles(JOB_NAME, TASK_INDEX, TASK_SIZE, SKIP, TAKE)
 
     logging.info(
         "job name: %s finished entire job in: %s",
