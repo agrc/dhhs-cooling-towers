@@ -72,6 +72,7 @@ def process_all_tiles(job_name, task_index, task_size):
     Returns:
         None
     """
+    task_start = perf_counter()
 
     #: calculate the number of rows to skip/take from the bigquery table
     #: assumes a static job_size environment variable is passed in, not calculated dynamically
@@ -83,18 +84,31 @@ def process_all_tiles(job_name, task_index, task_size):
 
     for row in rows:
         row_start = perf_counter()
+        logging.info("starting work on col: %i row: %i", row.col_num, row.row_num)
+
         tiles = download_tiles(row.col_num, row.row_num, None)
 
+        logging.info("download tiles finished in: %s", format_time(perf_counter() - task_start))
+
+        mosaic_start = perf_counter()
         mosaic_image = build_mosaic_image(tiles, row.col_num, row.row_num, None)
 
+        logging.info("mosaic finished in: %s", format_time(perf_counter() - mosaic_start))
+
+        result_start = perf_counter()
         results = detect_towers(mosaic_image)
+
+        logging.info("pytorch results finished in: %s", format_time(perf_counter() - result_start))
 
         if not results:
             logging.info("no image available")
 
             continue
 
+        locate_start = perf_counter()
         results_df = locate_results(results, row.col_num, row.row_num)
+
+        logging.info("locate results finished in: %s", format_time(perf_counter() - locate_start))
 
         if len(results_df.index) == 0:
             logging.info("no results to upload")
@@ -104,7 +118,10 @@ def process_all_tiles(job_name, task_index, task_size):
         logging.info(results_df.sort_values(by=["confidence"], ascending=True).head(20).to_string())
         logging.info("appending results for col: %i row: %i", row.col_num, row.row_num)
 
+        append_start = perf_counter()
         append_status = append_results(results_df)
+
+        logging.info("append results finished in: %s", format_time(perf_counter() - append_start))
 
         if append_status != "SUCCESS":
             logging.warning("append unsuccessful for col: %i row: %i, skipping index update", row.col_num, row.row_num)
@@ -113,7 +130,10 @@ def process_all_tiles(job_name, task_index, task_size):
 
         logging.info("updating index to 'processed' results for col: %i row: %i", row.col_num, row.row_num)
 
+        index_start = perf_counter()
         update_index(row.col_num, row.row_num)
+
+        logging.info("index update finished in: %s", format_time(perf_counter() - index_start))
 
         logging.info(
             "index col: %i row: %i processing finished in: %s",
@@ -121,6 +141,8 @@ def process_all_tiles(job_name, task_index, task_size):
             row.row_num,
             format_time(perf_counter() - row_start),
         )
+
+    logging.info("task finished in: %s", format_time(perf_counter() - task_start))
 
 
 def convert_to_cv2_image(image):
