@@ -61,13 +61,15 @@ def _get_secrets():
     raise FileNotFoundError("Secrets folder not found; secrets not loaded.")
 
 
-def process_all_tiles(job_name, task_index, task_size):
+def process_all_tiles(job_name, task_index, task_size, skip, take):
     """the code to run in the cloud run job that will run the full processing chain
 
     Args:
         job_name (str): the name of the run job. typically named after an animal in alphabetical order
         task_index (int): the index of the task running
-        job_size (int): the number of index rows for a specific task to process
+        task_size (int): the number of index rows for a specific task to process
+        skip (int): the number of index rows to skip (optional)
+        take (int): the number of index rows to take (optional)
 
     Returns:
         None
@@ -75,9 +77,12 @@ def process_all_tiles(job_name, task_index, task_size):
     task_start = perf_counter()
 
     #: calculate the number of rows to skip/take from the bigquery table
-    #: assumes a static job_size environment variable is passed in, not calculated dynamically
-    skip = task_index * task_size
-    take = task_size
+    #: if nonzero numbers are provided as environment variables, they will be used
+    #: otherwise, we assume a static job_size environment variable is passed in and
+    #: calculate skip/take based on the task_index
+    if skip in (0, None) and take in (0, None):
+        skip = task_index * task_size
+        take = task_size
 
     logging.info("job name: %s task: %i getting rows from bigquery", job_name, task_index)
     rows = get_rows_from_gbq(skip, take)
@@ -572,7 +577,7 @@ def append_results(results_df):
     )
 
     job = BIGQUERY_CLIENT.load_table_from_dataframe(results_df, table_id, job_config=job_config, location="US")
-   
+
     try:
         job_result = job.result()  # Waits for table load to complete.
     except Exception as ex:
@@ -592,7 +597,7 @@ def append_results(results_df):
 
     #: return a fresh job status
     status = BIGQUERY_CLIENT.get_job(job.job_id).state
-    
+
     return status
 
 
