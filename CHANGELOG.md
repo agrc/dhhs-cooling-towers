@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.0.0-1](https://github.com/agrc/dhhs-cooling-towers/compare/v1.0.0-0...v1.0.0-1) (2023-05-09)
+
+
+### 🚀 Features
+
+* add more perf_counters ([6202a57](https://github.com/agrc/dhhs-cooling-towers/commit/6202a570847f2d926c35649a24525417814da8be))
+* skip/take from env variables ([8335ab8](https://github.com/agrc/dhhs-cooling-towers/commit/8335ab80f9f79c2b46df8e420688897da5d0be09))
+
 ## 1.0.0-0 (2023-05-02)
 
 
