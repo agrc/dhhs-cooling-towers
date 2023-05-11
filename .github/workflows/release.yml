@@ -93,7 +93,7 @@ jobs:
               --image us-central1-docker.pkg.dev/${{ secrets.PROJECT_ID }}/images/job:latest \
               --service-account cloud-run-sa@${{ secrets.PROJECT_ID }}.iam.gserviceaccount.com \
               --set-env-vars PY_ENV=production,PROJECT_ID=${{ secrets.PROJECT_ID }} \
-              --memory=512Mi \
+              --memory=2Gi \
               --cpu=1 \
               --max-retries 0 \
               --parallelism 0 \
@@ -104,8 +104,8 @@ jobs:
                 --image us-central1-docker.pkg.dev/${{ secrets.PROJECT_ID }}/images/job:latest \
                 --service-account cloud-run-sa@${{ secrets.PROJECT_ID }}.iam.gserviceaccount.com \
                 --set-env-vars PY_ENV=production,PROJECT_ID=${{ secrets.PROJECT_ID }} \
-                --memory=512Mi \
-                --cpu=2 \
+                --memory=2Gi \
+                --cpu=1 \
                 --max-retries 0 \
                 --parallelism 0 \
                 --update-secrets=/secrets/app/secrets=secrets:latest
