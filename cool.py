@@ -574,6 +574,7 @@ def append_results(results_df):
     job_config = bigquery.LoadJobConfig(
         schema=[bigquery.SchemaField("name", bigquery.enums.SqlTypeNames.STRING)],
         write_disposition="WRITE_APPEND",
+        create_disposition="CREATE_NEVER",
     )
 
     job = BIGQUERY_CLIENT.load_table_from_dataframe(results_df, table_id, job_config=job_config, location="US")
