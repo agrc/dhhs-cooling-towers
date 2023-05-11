@@ -584,19 +584,23 @@ def append_results(results_df):
     except Exception as ex:
         logging.error("unable to append rows into the results table! %s", ex)
 
-        errors = job.errors
-        logging.error("encountered the following errors:")
-        for error in errors:
-            logging.error(error)
+        if job.errors is not None:
+            logging.error("encountered the following errors:")
+
+            for error in job.errors:
+                logging.error(error)
 
         return
 
-    if job_result.total_rows == 0:
-        logging.warning("no rows were appended into the results table!")
-
-    logging.info("rows append into the results table: %i", job_result.total_rows)
+    logging.info("insert result: %s", job_result)
 
     #: return a fresh job status
+    if job is None:
+        return None
+
+    if job.job_id is None:
+        return None
+
     status = BIGQUERY_CLIENT.get_job(job.job_id).state
 
     return status
