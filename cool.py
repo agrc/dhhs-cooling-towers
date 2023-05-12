@@ -93,7 +93,7 @@ def process_all_tiles(job_name, task_index, task_size, skip, take):
 
         tiles = download_tiles(row.col_num, row.row_num, None)
 
-        logging.info("download tiles finished in: %s", format_time(perf_counter() - task_start))
+        logging.info("download tiles finished in: %s", format_time(perf_counter() - row_start))
 
         mosaic_start = perf_counter()
         mosaic_image = build_mosaic_image(tiles, row.col_num, row.row_num, None)
