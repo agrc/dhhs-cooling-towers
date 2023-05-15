@@ -628,16 +628,26 @@ def update_index(col, row):
     query = BIGQUERY_CLIENT.query(dml)
 
     try:
-        query_result = query.result()  # Waits for update to complete.
+        query.result()  # Waits for update to complete.
     except Exception as ex:
         logging.error("unable to update index on col: %i, row: %i, %s", col, row, ex)
 
         return
 
-    if query_result.total_rows == 0:
-        logging.warning("no rows were updated in the index table!")
+    #: return a fresh job status
+    if query is None:
+        return None
 
-    logging.info("rows updated in the index table: %i", query_result.total_rows)
+    if query.job_id is None:
+        return None
+
+    fresh_job = BIGQUERY_CLIENT.get_job(query.job_id)
+
+    if fresh_job.error_result is None and fresh_job.state == "DONE":
+        logging.info("rows updated in the index table: %i", fresh_job.num_dml_affected_rows)
+
+    if fresh_job.num_dml_affected_rows == 0:
+        logging.warning("no rows were updated in the index table!")
 
 
 def format_time(seconds):
