@@ -123,7 +123,19 @@ def process_all_tiles(job_name, task_index, task_size, skip, take):
         logging.info("locate results finished in: %s", format_time(perf_counter() - locate_start))
 
         if len(results_df.index) == 0:
-            logging.info("no results to upload")
+            logging.info("no results to upload, updating the index")
+
+            index_start = perf_counter()
+            update_index(row.col_num, row.row_num)
+
+            logging.info("index update finished in: %s", format_time(perf_counter() - index_start))
+            
+            logging.info(
+            "index col: %i row: %i processing finished in: %s",
+            row.col_num,
+            row.row_num,
+            format_time(perf_counter() - row_start),
+            )
 
             continue
 
