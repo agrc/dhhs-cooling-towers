@@ -595,7 +595,13 @@ def append_results(results_df):
     if job.job_id is None:
         return None
 
-    status = BIGQUERY_CLIENT.get_job(job.job_id).state
+    fresh_job = BIGQUERY_CLIENT.get_job(job.job_id)
+
+    #: initialize status as None
+    status = None
+
+    if fresh_job.error_result is None and fresh_job.state == "DONE":
+        status = "SUCCESS"
 
     return status
 
