@@ -1,5 +1,22 @@
 # Changelog
 
+## [1.0.0-1](https://github.com/agrc/dhhs-cooling-towers/compare/v1.0.0-0...v1.0.0-1) (2023-05-15)
+
+
+### 📖 Documentation Improvements
+
+* add small batch cloud run values ([5afbc6a](https://github.com/agrc/dhhs-cooling-towers/commit/5afbc6a6e960d2f47a3242f9a627459cd84c806f))
+
+
+### 🚀 Features
+
+* add skip/take to logs ([b65faad](https://github.com/agrc/dhhs-cooling-towers/commit/b65faad4e5f8e5b9e4109cf19abea3b597326206))
+
+
+### 🐛 Bug Fixes
+
+* update index if no results ([a35009a](https://github.com/agrc/dhhs-cooling-towers/commit/a35009a89569fde21d86527e40aa1ac4b7c3a5a4))
+
 ## 1.0.0-0 (2023-05-15)
 
 
