@@ -586,8 +586,6 @@ def append_results(results_df):
 
         return
 
-    logging.info("insert result: %s", job_result)
-
     #: return a fresh job status
     if job is None:
         return None
