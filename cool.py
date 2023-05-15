@@ -51,12 +51,12 @@ def _get_secrets():
 
     #: Try to get the secrets from the Cloud Function mount point
     if secret_folder.exists():
-        return json.loads(Path("/secrets/app/secrets.json").read_text(encoding="utf-8"))
+        return json.loads(Path("/secrets/app/secrets").read_text(encoding="utf-8"))
 
     #: Otherwise, try to load a local copy for local development
     secret_folder = Path(__file__).parent / "secrets"
     if secret_folder.exists():
-        return json.loads((secret_folder / "secrets.json").read_text(encoding="utf-8"))
+        return json.loads((secret_folder / "secrets").read_text(encoding="utf-8"))
 
     raise FileNotFoundError("Secrets folder not found; secrets not loaded.")
 
@@ -93,7 +93,7 @@ def process_all_tiles(job_name, task_index, task_size, skip, take):
 
         tiles = download_tiles(row.col_num, row.row_num, None)
 
-        logging.info("download tiles finished in: %s", format_time(perf_counter() - task_start))
+        logging.info("download tiles finished in: %s", format_time(perf_counter() - row_start))
 
         mosaic_start = perf_counter()
         mosaic_image = build_mosaic_image(tiles, row.col_num, row.row_num, None)
@@ -574,6 +574,7 @@ def append_results(results_df):
     job_config = bigquery.LoadJobConfig(
         schema=[bigquery.SchemaField("name", bigquery.enums.SqlTypeNames.STRING)],
         write_disposition="WRITE_APPEND",
+        create_disposition="CREATE_NEVER",
     )
 
     job = BIGQUERY_CLIENT.load_table_from_dataframe(results_df, table_id, job_config=job_config, location="US")
@@ -583,19 +584,23 @@ def append_results(results_df):
     except Exception as ex:
         logging.error("unable to append rows into the results table! %s", ex)
 
-        errors = job.errors
-        logging.error("encountered the following errors:")
-        for error in errors:
-            logging.error(error)
+        if job.errors is not None:
+            logging.error("encountered the following errors:")
+
+            for error in job.errors:
+                logging.error(error)
 
         return
 
-    if job_result.total_rows == 0:
-        logging.warning("no rows were appended into the results table!")
-
-    logging.info("rows append into the results table: %i", job_result.total_rows)
+    logging.info("insert result: %s", job_result)
 
     #: return a fresh job status
+    if job is None:
+        return None
+
+    if job.job_id is None:
+        return None
+
     status = BIGQUERY_CLIENT.get_job(job.job_id).state
 
     return status
