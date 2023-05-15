@@ -108,6 +108,13 @@ def process_all_tiles(job_name, task_index, task_size, skip, take):
         if not results:
             logging.info("no image available")
 
+            logging.info(
+            "index col: %i row: %i processing finished in: %s",
+            row.col_num,
+            row.row_num,
+            format_time(perf_counter() - row_start),
+            )
+            
             continue
 
         locate_start = perf_counter()
