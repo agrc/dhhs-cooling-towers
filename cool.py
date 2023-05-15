@@ -120,7 +120,6 @@ def process_all_tiles(job_name, task_index, task_size, skip, take):
 
             continue
 
-        logging.info(results_df.sort_values(by=["confidence"], ascending=True).head(20).to_string())
         logging.info("appending results for col: %i row: %i", row.col_num, row.row_num)
 
         append_start = perf_counter()
@@ -325,8 +324,6 @@ def download_tiles(col, row, out_dir):
 
         return None
 
-    logging.debug("download function is working with %s", type(tile_list[0]))
-
     if out_dir:
         if not out_dir.exists():
             out_dir.mkdir(parents=True)
@@ -334,7 +331,7 @@ def download_tiles(col, row, out_dir):
         i = 0
         for tile in tile_list:
             img = convert_to_cv2_image(tile)
-            logging.info("download is saving from %s", type(img))
+            logging.debug("download is saving from %s", type(img))
             tile_outfile = out_dir / f"{col}_{row}_{i}.jpg"
             logging.info("saving to %s", tile_outfile)
             cv2.imwrite(str(tile_outfile), img)
@@ -484,7 +481,7 @@ def detect_towers(image):
     #: we want to detect more than necessary, we can always weed out bad ones with a query later
     logging.debug("initial model confidence threshold: %s", towerscout_model.conf)
     towerscout_model.conf = 0.007
-    logging.info("adjusted model confidence threshold: %s", towerscout_model.conf)
+    logging.debug("adjusted model confidence threshold: %s", towerscout_model.conf)
 
     #: adjust model overlap threshold for accepting a detection (higher means more detections)
     #: model.iou - range of values is 0 to 1
@@ -495,10 +492,7 @@ def detect_towers(image):
     towerscout_model.iou = 0.25
     logging.debug("adjusted model confidence threshold: %s", towerscout_model.iou)
 
-    logging.info("detect is working with %s", type(image))
-
     if isinstance(image, np.ndarray):
-        logging.info("reordering colors to RGB")
         image = reorder_colors_to_rgb(image)
 
     scan_start = perf_counter()
