@@ -31,3 +31,13 @@ To work with the CLI,
    - `python cool_cli.py`
 
 ## Testing
+
+## Cloud Run Job
+
+To test a small amount of data with a coud run job
+
+1. Set the number of tasks to 1
+1. Set environment variables
+   - `SKIP`: int e.g. 1106600
+   - `TAKE`: int e.g. 50
+   - `JOB_NAME`: string e.g. alligator
