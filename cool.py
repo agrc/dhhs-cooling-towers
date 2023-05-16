@@ -13,29 +13,57 @@ from time import perf_counter
 from types import SimpleNamespace
 
 import cv2
-import google.cloud.bigquery as bigquery
 import google.cloud.logging
 import google.cloud.storage
 import mercantile
 import numpy as np
 import pyproj
 import requests
+import sqlalchemy
 import torch
+from google.cloud.sql.connector import Connector, IPTypes
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
-
-if "PY_ENV" in environ and environ["PY_ENV"] == "production":
-    logging.info("setting up production environment")
-    LOGGING_CLIENT = google.cloud.logging.Client()
-    STORAGE_CLIENT = google.cloud.storage.Client()
-    BIGQUERY_CLIENT = bigquery.Client()
-
-    LOGGING_CLIENT.setup_logging()
 
 QUAD_WORD = None
 MODEL = None
 SECRETS = None
 PROJECT_ID = getenv("PROJECT_ID")
+CONNECTION_NAME = getenv("CLOUDSQL_CONNECTION_STRING")
+
+
+def _get_connection():
+    """create the connection to cloud sql
+
+    Args:
+        None
+
+    Returns:
+        dict: A dictionary containing the secrets
+    """
+    with Connector() as connector:
+        conn = connector.connect(
+            CONNECTION_NAME,  # Cloud SQL Instance Connection Name
+            "pg8000",
+            user="cloud-run-sa@ut-dts-agrc-dhhs-towers-dev.iam",
+            db="towers",
+            enable_iam_auth=True,
+            ip_type=IPTypes.PUBLIC,
+        )
+
+        return conn
+
+
+if "PY_ENV" in environ and environ["PY_ENV"] == "production":
+    logging.info("setting up production environment")
+    LOGGING_CLIENT = google.cloud.logging.Client()
+    STORAGE_CLIENT = google.cloud.storage.Client()
+    POOL = sqlalchemy.create_engine(
+        "postgresql+pg8000://",
+        creator=_get_connection,
+    )
+
+    LOGGING_CLIENT.setup_logging()
 
 
 def _get_secrets():
@@ -206,18 +234,20 @@ def get_rows_from_gbq(skip, take):
     """
     #: create sql query with skip/take for unprocessed rows
     #: order by row, col ascending to ensure consistent processing order
-    sql = f"""
-    SELECT * FROM `{PROJECT_ID}.indices.images_within_habitat`
+    sql = sqlalchemy.text(
+        f"""
+    SELECT * FROM images_within_habitat
     WHERE processed = false
     ORDER BY row_num, col_num
     LIMIT {take} OFFSET {skip}
     """
+    )
 
     #: perform query
-    query_job = BIGQUERY_CLIENT.query(sql)
-    rows = query_job.result()  #: waits for query to finish
+    with POOL.connect() as conn:
+        rows = conn.execute(sql).fetchall()
 
-    return rows
+        return rows
 
 
 def _get_retry_session():
@@ -551,8 +581,20 @@ def locate_results(results, col, row):
         return results_df
 
     #: calculate centroid in pixels
-    results_df["x_centroid_px"] = (results_df["xmin"] + results_df["xmax"]) / 2
-    results_df["y_centroid_px"] = (results_df["ymin"] + results_df["ymax"]) / 2
+    results_df["centroid_x_px"] = (results_df["xmin"] + results_df["xmax"]) / 2
+    results_df["centroid_y_px"] = (results_df["ymin"] + results_df["ymax"]) / 2
+
+    results_df.rename(
+        columns={
+            "xmin": "envelope_x_min",
+            "xmax": "envelope_x_max",
+            "ymin": "envelope_y_min",
+            "ymax": "envelope_y_max",
+            "class": "object_class",
+            "name": "object_name",
+        },
+        inplace=True,
+    )
 
     #: project tile coords to web mercator (3857)
     wgs84 = 4326
@@ -561,12 +603,12 @@ def locate_results(results, col, row):
     transformer = pyproj.Transformer.from_crs(
         pyproj.CRS.from_epsg(wgs84), pyproj.CRS.from_epsg(web_mercator), always_xy=True
     )
-    x, y = transformer.transform(tile.lng, tile.lat)
+    x, y = transformer.transform(tile.lng, tile.lat)  # pylint:ignore=unpacking-non-sequence
 
     #: calculate centroid x/y coords in web mercator
     meters_per_pixel = 0.1492910708688
-    results_df["x_centroid_3857"] = x + results_df["x_centroid_px"] * meters_per_pixel
-    results_df["y_centroid_3857"] = y - results_df["y_centroid_px"] * meters_per_pixel
+    results_df["centroid_x_3857"] = x + results_df["centroid_x_px"] * meters_per_pixel
+    results_df["centroid_y_3857"] = y - results_df["centroid_y_px"] * meters_per_pixel
 
     return results_df
 
@@ -580,45 +622,16 @@ def append_results(results_df):
     Returns:
         None
     """
-    table_id = f"{PROJECT_ID}.output_data.cooling_tower_results"
-
-    #: specify the type of columns whose type cannot be auto-detected. For
-    #: the "name" column uses pandas dtype "object", so it is ambiguous.
-    job_config = bigquery.LoadJobConfig(
-        schema=[bigquery.SchemaField("name", bigquery.enums.SqlTypeNames.STRING)],
-        write_disposition="WRITE_APPEND",
-        create_disposition="CREATE_NEVER",
-    )
-
-    job = BIGQUERY_CLIENT.load_table_from_dataframe(results_df, table_id, job_config=job_config, location="US")
+    #: initialize status as None
+    status = "FAIL"
 
     try:
-        job_result = job.result()  # Waits for table load to complete.
+        rows = results_df.to_sql("cooling_tower_results", POOL, if_exists="append", index=False)
+
+        if rows > 0:
+            status = "SUCCESS"
     except Exception as ex:
         logging.error("unable to append rows into the results table! %s", ex)
-
-        if job.errors is not None:
-            logging.error("encountered the following errors:")
-
-            for error in job.errors:
-                logging.error(error)
-
-        return
-
-    #: return a fresh job status
-    if job is None:
-        return None
-
-    if job.job_id is None:
-        return None
-
-    fresh_job = BIGQUERY_CLIENT.get_job(job.job_id)
-
-    #: initialize status as None
-    status = None
-
-    if fresh_job.error_result is None and fresh_job.state == "DONE":
-        status = "SUCCESS"
 
     return status
 
@@ -633,38 +646,24 @@ def update_index(col, row):
     Returns:
         None
     """
-    table_id = f"{PROJECT_ID}.indices.images_within_habitat"
 
     #: create dml statement to update specific row
-    dml = f"""
-    UPDATE `{table_id}`
+    sql = sqlalchemy.text(
+        f"""
+    UPDATE images_within_habitat
     SET processed = true
     WHERE col_num = {col} AND row_num = {row}
     """
-
-    query = BIGQUERY_CLIENT.query(dml)
+    )
 
     try:
-        query.result()  # Waits for update to complete.
+        with POOL.connect() as conn:
+            conn.execute(sql)
+            conn.commit()
     except Exception as ex:
         logging.error("unable to update index on col: %i, row: %i, %s", col, row, ex)
 
         return
-
-    #: return a fresh job status
-    if query is None:
-        return None
-
-    if query.job_id is None:
-        return None
-
-    fresh_job = BIGQUERY_CLIENT.get_job(query.job_id)
-
-    if fresh_job.error_result is None and fresh_job.state == "DONE":
-        logging.info("rows updated in the index table: %i", fresh_job.num_dml_affected_rows)
-
-    if fresh_job.num_dml_affected_rows == 0:
-        logging.warning("no rows were updated in the index table!")
 
 
 def format_time(seconds):
