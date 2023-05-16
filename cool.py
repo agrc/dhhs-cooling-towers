@@ -112,7 +112,9 @@ def process_all_tiles(job_name, task_index, task_size, skip, take):
         skip = task_index * task_size
         take = task_size
 
-    logging.info("job name: %s task: %i skip: %i take: %i, getting rows from bigquery", job_name, task_index, skip, take)
+    logging.info(
+        "job name: %s task: %i skip: %i take: %i, getting rows from bigquery", job_name, task_index, skip, take
+    )
     rows = get_rows_from_gbq(skip, take)
 
     for row in rows:
@@ -137,12 +139,12 @@ def process_all_tiles(job_name, task_index, task_size, skip, take):
             logging.info("no image available")
 
             logging.info(
-            "index col: %i row: %i processing finished in: %s",
-            row.col_num,
-            row.row_num,
-            format_time(perf_counter() - row_start),
+                "index col: %i row: %i processing finished in: %s",
+                row.col_num,
+                row.row_num,
+                format_time(perf_counter() - row_start),
             )
-            
+
             continue
 
         locate_start = perf_counter()
@@ -157,12 +159,12 @@ def process_all_tiles(job_name, task_index, task_size, skip, take):
             update_index(row.col_num, row.row_num)
 
             logging.info("index update finished in: %s", format_time(perf_counter() - index_start))
-            
+
             logging.info(
-            "index col: %i row: %i processing finished in: %s",
-            row.col_num,
-            row.row_num,
-            format_time(perf_counter() - row_start),
+                "index col: %i row: %i processing finished in: %s",
+                row.col_num,
+                row.row_num,
+                format_time(perf_counter() - row_start),
             )
 
             continue
