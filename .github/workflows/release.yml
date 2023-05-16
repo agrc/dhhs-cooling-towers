@@ -82,13 +82,11 @@ jobs:
 
       - name: ☁️ Set up Cloud SDK
         uses: google-github-actions/setup-gcloud@v1
-        with:
-          install_components: "beta"
 
       - name: 🚀 Deploy to Cloud Run Job
         run: |
-          if [ ! "$(gcloud beta run jobs list | grep default)" ]; then
-            gcloud beta run jobs create default \
+          if [ ! "$(gcloud run jobs list | grep default)" ]; then
+            gcloud run jobs create default \
               --region us-central1 \
               --image us-central1-docker.pkg.dev/${{ secrets.PROJECT_ID }}/images/job:latest \
               --service-account cloud-run-sa@${{ secrets.PROJECT_ID }}.iam.gserviceaccount.com \
@@ -99,7 +97,7 @@ jobs:
               --parallelism 0 \
               --set-secrets=/secrets/app/secrets=secrets:latest
           else
-            gcloud beta run jobs update default \
+            gcloud run jobs update default \
                 --region us-central1 \
                 --image us-central1-docker.pkg.dev/${{ secrets.PROJECT_ID }}/images/job:latest \
                 --service-account cloud-run-sa@${{ secrets.PROJECT_ID }}.iam.gserviceaccount.com \
