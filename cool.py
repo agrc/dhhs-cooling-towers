@@ -113,7 +113,7 @@ def process_all_tiles(job_name, task_index, task_size, skip, take):
     logging.info(
         "job name: %s task: %i skip: %i take: %i, getting rows from bigquery", job_name, task_index, skip, take
     )
-    rows = get_rows_from_gbq(skip, take)
+    rows = get_rows(skip, take)
 
     for row in rows:
         row_start = perf_counter()
@@ -222,15 +222,15 @@ def reorder_colors_to_rgb(image):
     return cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
 
 
-def get_rows_from_gbq(skip, take):
-    """grab rows to process from bigquery indices table
+def get_rows(skip, take):
+    """grab rows to process from the indices table
 
     Args:
         skip (string): the number of leading rows to skip
         take (string): the number of rows to get form the table
 
     Returns:
-        rows (iterator): big query row iterator
+        rows (iterator): a row iterator
     """
     #: create sql query with skip/take for unprocessed rows
     #: order by row, col ascending to ensure consistent processing order
