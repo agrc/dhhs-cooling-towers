@@ -6,18 +6,9 @@ the file to run to start the project
 
 import logging
 from os import getenv
-from sys import stdout
 from time import perf_counter
 
 import cool
-
-#: Set up logging
-logging.basicConfig(
-    stream=stdout,
-    format="%(levelname)-7s %(asctime)s %(module)10s:%(lineno)5s %(message)s",
-    datefmt="%m-%d %H:%M:%S",
-    level=logging.INFO,
-)
 
 #: Set up variables
 JOB_NAME = getenv("JOB_NAME")
