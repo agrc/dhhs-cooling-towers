@@ -340,7 +340,7 @@ def download_tiles(col, row, out_dir):
     Returns:
         cv2_images (list): list of cv2 images
     """
-    global SECRETS
+    global SECRETS  # pylint: disable=global-statement
 
     if SECRETS is None:
         logging.info("loading secrets")
@@ -501,7 +501,8 @@ def _get_model():
     Returns:
         model: loaded pytorch model ready for use
     """
-    global MODEL
+    global MODEL  # pylint: disable=global-statement
+
     if MODEL is None:
         logging.info("loading pytorch model")
         MODEL = load_pytorch_model()
@@ -605,7 +606,7 @@ def locate_results(results, col, row):
     transformer = pyproj.Transformer.from_crs(
         pyproj.CRS.from_epsg(wgs84), pyproj.CRS.from_epsg(web_mercator), always_xy=True
     )
-    x, y = transformer.transform(tile.lng, tile.lat)  # pylint:ignore=unpacking-non-sequence
+    x, y = transformer.transform(tile.lng, tile.lat)  # pylint: disable=unpacking-non-sequence
 
     #: calculate centroid x/y coords in web mercator
     meters_per_pixel = 0.1492910708688
