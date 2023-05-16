@@ -103,7 +103,7 @@ def process_all_tiles(job_name, task_index, task_size, skip, take):
     """
     task_start = perf_counter()
 
-    #: calculate the number of rows to skip/take from the bigquery table
+    #: calculate the number of rows to skip/take from the database table
     #: if nonzero numbers are provided as environment variables, they will be used
     #: otherwise, we assume a static job_size environment variable is passed in and
     #: calculate skip/take based on the task_index
@@ -112,7 +112,7 @@ def process_all_tiles(job_name, task_index, task_size, skip, take):
         take = task_size
 
     logging.info(
-        "job name: %s task: %i skip: %i take: %i, getting rows from bigquery", job_name, task_index, skip, take
+        "job name: %s task: %i skip: %i take: %i, getting rows from database", job_name, task_index, skip, take
     )
     rows = get_rows(skip, take)
 
@@ -616,7 +616,7 @@ def locate_results(results, col, row):
 
 
 def append_results(results_df):
-    """append results dataframe into bigquery results table
+    """append results dataframe into results table
 
     Args:
         results_df (dataframe): dataframe with cooling tower detection results
@@ -639,7 +639,7 @@ def append_results(results_df):
 
 
 def update_index(col, row):
-    """update the `images_within_habitat` table in bigquery after a row is processed
+    """update the `images_within_habitat` table after a row is processed
 
     Args:
         col (str): the column of the WMTS index for the tile of interest (top-left tile)
