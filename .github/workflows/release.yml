@@ -92,7 +92,7 @@ jobs:
               --region us-central1 \
               --image us-central1-docker.pkg.dev/${{ secrets.PROJECT_ID }}/images/job:latest \
               --service-account cloud-run-sa@${{ secrets.PROJECT_ID }}.iam.gserviceaccount.com \
-              --set-env-vars PY_ENV=production,PROJECT_ID=${{ secrets.PROJECT_ID }} \
+              --set-env-vars PY_ENV=production,PROJECT_ID=${{ secrets.PROJECT_ID }},JOB_SIZE=50,CLOUDSQL_CONNECTION_STRING=${{ secrets.CLOUD_SQL_CONNECTION_STRING }} \
               --memory=2Gi \
               --cpu=1 \
               --max-retries 0 \
@@ -103,7 +103,7 @@ jobs:
                 --region us-central1 \
                 --image us-central1-docker.pkg.dev/${{ secrets.PROJECT_ID }}/images/job:latest \
                 --service-account cloud-run-sa@${{ secrets.PROJECT_ID }}.iam.gserviceaccount.com \
-                --set-env-vars PY_ENV=production,PROJECT_ID=${{ secrets.PROJECT_ID }} \
+                --set-env-vars PY_ENV=production,PROJECT_ID=${{ secrets.PROJECT_ID }},JOB_SIZE=50,CLOUDSQL_CONNECTION_STRING=${{ secrets.CLOUD_SQL_CONNECTION_STRING }} \
                 --memory=2Gi \
                 --cpu=1 \
                 --max-retries 0 \
