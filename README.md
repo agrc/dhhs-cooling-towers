@@ -62,8 +62,6 @@ Tools to extract cooling tower locations from aerial imagery
    python -m venv .env
    .env\Scripts\activate.bat
    pip install -r requirements.dev.txt
-   cd yolov5
-   pip install -r requirements.txt
    ```
 
 ## CLI
