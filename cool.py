@@ -111,34 +111,27 @@ def process_all_tiles(job_name, task_index, task_size, skip, take):
         skip = task_index * task_size
         take = task_size
 
-    logging.info(
-        "job name: %s task: %i skip: %i take: %i, getting rows from database", job_name, task_index, skip, take
-    )
+    logging.info("job: %s task: %i start %s", job_name, task_index, {"skip": skip, "take": take})
     rows = get_rows(skip, take)
 
     for row in rows:
+        logging.info("starting %i, %i", row.col_num, row.row_num)
+
         row_start = perf_counter()
-        logging.info("starting work on col: %i row: %i", row.col_num, row.row_num)
-
         tiles = download_tiles(row.col_num, row.row_num, None)
-
-        logging.info("download tiles finished in: %s", format_time(perf_counter() - row_start))
+        logging.info("%i, %i download: %s", row.col_num, row.row_num, format_time(perf_counter() - row_start))
 
         mosaic_start = perf_counter()
         mosaic_image = build_mosaic_image(tiles, row.col_num, row.row_num, None)
-
-        logging.info("mosaic finished in: %s", format_time(perf_counter() - mosaic_start))
+        logging.info("%i, %i mosaic: %s", row.col_num, row.row_num, format_time(perf_counter() - mosaic_start))
 
         result_start = perf_counter()
         results = detect_towers(mosaic_image)
-
-        logging.info("pytorch results finished in: %s", format_time(perf_counter() - result_start))
+        logging.info("%i, %i pytorch: %s", row.col_num, row.row_num, format_time(perf_counter() - result_start))
 
         if not results:
-            logging.info("no image available")
-
             logging.info(
-                "index col: %i row: %i processing finished in: %s",
+                "%i, %i finished: %s",
                 row.col_num,
                 row.row_num,
                 format_time(perf_counter() - row_start),
@@ -148,19 +141,15 @@ def process_all_tiles(job_name, task_index, task_size, skip, take):
 
         locate_start = perf_counter()
         results_df = locate_results(results, row.col_num, row.row_num)
-
-        logging.info("locate results finished in: %s", format_time(perf_counter() - locate_start))
+        logging.info("georeference: %s", format_time(perf_counter() - locate_start))
 
         if len(results_df.index) == 0:
-            logging.info("no results to upload, updating the index")
+            logging.debug("no results to upload, updating the index")
 
-            index_start = perf_counter()
             update_index(row.col_num, row.row_num)
 
-            logging.info("index update finished in: %s", format_time(perf_counter() - index_start))
-
             logging.info(
-                "index col: %i row: %i processing finished in: %s",
+                "%i, %i finished: %s",
                 row.col_num,
                 row.row_num,
                 format_time(perf_counter() - row_start),
@@ -168,33 +157,27 @@ def process_all_tiles(job_name, task_index, task_size, skip, take):
 
             continue
 
-        logging.info("appending results for col: %i row: %i", row.col_num, row.row_num)
+        logging.debug("appending results for col: %i row: %i", row.col_num, row.row_num)
 
         append_start = perf_counter()
         append_status = append_results(results_df)
-
-        logging.info("append results finished in: %s", format_time(perf_counter() - append_start))
+        logging.info("%i, %i append results: %s", row.col_num, row.row_num, format_time(perf_counter() - append_start))
 
         if append_status != "SUCCESS":
             logging.warning("append unsuccessful for col: %i row: %i, skipping index update", row.col_num, row.row_num)
 
             continue
 
-        logging.info("updating index to 'processed' results for col: %i row: %i", row.col_num, row.row_num)
-
-        index_start = perf_counter()
         update_index(row.col_num, row.row_num)
 
-        logging.info("index update finished in: %s", format_time(perf_counter() - index_start))
-
         logging.info(
-            "index col: %i row: %i processing finished in: %s",
+            "%i, %i finished: %s",
             row.col_num,
             row.row_num,
             format_time(perf_counter() - row_start),
         )
 
-    logging.info("task finished in: %s", format_time(perf_counter() - task_start))
+    logging.info("job: %s task: %i finished: %s", job_name, task_index, format_time(perf_counter() - task_start))
 
 
 def convert_to_cv2_image(image):
@@ -244,9 +227,14 @@ def get_rows(skip, take):
     """
     )
 
+    task_start = perf_counter()
+
     #: perform query
     with POOL.connect() as conn:
         rows = conn.execute(sql).fetchall()
+        conn.commit()
+
+        logging.info("get rows query: %s", format_time(perf_counter() - task_start))
 
         return rows
 
@@ -628,8 +616,11 @@ def append_results(results_df):
     status = "FAIL"
 
     try:
+        task_start = perf_counter()
+
         rows = results_df.to_sql("cooling_tower_results", POOL, if_exists="append", index=False)
 
+        logging.info("update cooling_tower_results query: %s", format_time(perf_counter() - task_start))
         if rows > 0:
             status = "SUCCESS"
     except Exception as ex:
@@ -659,9 +650,13 @@ def update_index(col, row):
     )
 
     try:
+        task_start = perf_counter()
         with POOL.connect() as conn:
             conn.execute(sql)
             conn.commit()
+
+            logging.info("update images_within_habitat query: %s", format_time(perf_counter() - task_start))
+
     except Exception as ex:
         logging.error("unable to update index on col: %i, row: %i, %s", col, row, ex)
 
