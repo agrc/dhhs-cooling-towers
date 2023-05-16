@@ -111,7 +111,7 @@ def main():
     if args["process-upload"]:
         output_directory = None
 
-        rows = cool.get_rows_from_gbq(args["<skip>"], args["<take>"])
+        rows = cool.get_rows(args["<skip>"], args["<take>"])
 
         for row in rows:
             print("downloading tiles ...")
