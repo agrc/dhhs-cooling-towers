@@ -16,35 +16,37 @@ Tools to extract cooling tower locations from aerial imagery
    - Export format: `CVS`
    - Compression: `None`
 
-1. Create a cloud sql table for the task tracking
+1. Using the cloud sql proxy
 
-   ```sql
-   CREATE TABLE public.images_within_habitat (
-      row_num int NULL,
-      col_num int NULL,
-      processed bool NULL DEFAULT false
-   );
-   ```
+   1. Create a cloud sql table for the task tracking
 
-1. Import the CSV into the table
+      ```sql
+      CREATE TABLE public.images_within_habitat (
+         row_num int NULL,
+         col_num int NULL,
+         processed bool NULL DEFAULT false
+      );
+      ```
 
-1. Create a cloud sql table for the results
+      1. Create a cloud sql table for the results
 
-   ```sql
-   CREATE TABLE public.cooling_tower_results (
-    envelope_x_min decimal NULL,
-    envelope_y_min decimal NULL,
-    envelope_x_max decimal NULL,
-    envelope_y_max decimal NULL,
-    confidence decimal NULL,
-    object_class int NULL,
-    object_name varchar NULL,
-    centroid_x_px decimal NULL,
-    centroid_y_px decimal NULL,
-    centroid_x_3857 decimal NULL,
-    centroid_y_3857 decimal NULL
-   );
-   ```
+      ```sql
+      CREATE TABLE public.cooling_tower_results (
+         envelope_x_min decimal NULL,
+         envelope_y_min decimal NULL,
+         envelope_x_max decimal NULL,
+         envelope_y_max decimal NULL,
+         confidence decimal NULL,
+         object_class int NULL,
+         object_name varchar NULL,
+         centroid_x_px decimal NULL,
+         centroid_y_px decimal NULL,
+         centroid_x_3857 decimal NULL,
+         centroid_y_3857 decimal NULL
+      );
+      ```
+
+1. Import the CSV into the `images_within_habitat` table
 
 ## To work with the CLI locally
 
