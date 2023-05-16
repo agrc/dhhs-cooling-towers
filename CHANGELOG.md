@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.0.0-3](https://github.com/agrc/dhhs-cooling-towers/compare/v1.0.0-2...v1.0.0-3) (2023-05-16)
+
+
+### 📖 Documentation Improvements
+
+* reorder data prep steps ([05d951e](https://github.com/agrc/dhhs-cooling-towers/commit/05d951e08c1d3f3de05bde065b151a70845a4abf))
+
+
+### 🐛 Bug Fixes
+
+* update connector creation ([78f22c2](https://github.com/agrc/dhhs-cooling-towers/commit/78f22c21316e8becb88679d96cd3bee20057cc83))
+
 ## [1.0.0-2](https://github.com/agrc/dhhs-cooling-towers/compare/v1.0.0-1...v1.0.0-2) (2023-05-16)
 
 
