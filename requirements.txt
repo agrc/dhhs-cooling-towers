@@ -1,7 +1,6 @@
 cloud-sql-python-connector[pg8000]==1.*
 sqlalchemy==2.*
 google-cloud-logging==3.*
-google-cloud-storage==2.*
 numpy>=1.*
 opencv-python>=4.*
 requests>=2.*

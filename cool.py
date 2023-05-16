@@ -14,7 +14,6 @@ from types import SimpleNamespace
 
 import cv2
 import google.cloud.logging
-import google.cloud.storage
 import mercantile
 import numpy as np
 import pyproj
@@ -57,7 +56,6 @@ def _get_connection():
 if "PY_ENV" in environ and environ["PY_ENV"] == "production":
     logging.info("setting up production environment")
     LOGGING_CLIENT = google.cloud.logging.Client()
-    STORAGE_CLIENT = google.cloud.storage.Client()
     POOL = sqlalchemy.create_engine(
         "postgresql+pg8000://",
         creator=_get_connection,
