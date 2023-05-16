@@ -56,7 +56,7 @@ Tools to extract cooling tower locations from aerial imagery
    git clone https://github.com/ultralytics/yolov5
    ```
 
-1. Create virtual environment from parent directory with Python 3.10
+1. Create virtual environment from the parent directory with Python 3.10
 
    ```sh
    python -m venv .env
@@ -78,10 +78,10 @@ To work with the CLI,
 
 ## Cloud Run Job
 
-To test a small amount of data with a coud run job
+To test a small amount of data
 
 1. Set the number of tasks to 1
-1. Set environment variables
+1. Set the environment variables
    - `SKIP`: int e.g. 1106600
    - `TAKE`: int e.g. 50
    - `JOB_NAME`: string e.g. alligator
