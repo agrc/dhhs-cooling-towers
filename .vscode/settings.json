@@ -17,6 +17,7 @@
     "forcelist",
     "frombuffer",
     "gcloud",
+    "georeference",
     "googleapis",
     "gserviceaccount",
     "Gunicorn",
