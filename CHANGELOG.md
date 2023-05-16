@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.0-4](https://github.com/agrc/dhhs-cooling-towers/compare/v1.0.0-3...v1.0.0-4) (2023-05-16)
+
+
+### 📖 Documentation Improvements
+
+* must grant access to users ([d835867](https://github.com/agrc/dhhs-cooling-towers/commit/d835867ea606c4fdf1919f6ddca7335a9bc95579))
+
 ## [1.0.0-3](https://github.com/agrc/dhhs-cooling-towers/compare/v1.0.0-2...v1.0.0-3) (2023-05-16)
 
 
