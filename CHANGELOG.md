@@ -1,5 +1,20 @@
 # Changelog
 
+## [1.0.0-2](https://github.com/agrc/dhhs-cooling-towers/compare/v1.0.0-1...v1.0.0-2) (2023-05-16)
+
+
+### 📖 Documentation Improvements
+
+* add how to run the batch job ([6856009](https://github.com/agrc/dhhs-cooling-towers/commit/68560099e9b831a06a0998444307cfb7d4bb2d71))
+* document how to prepare the data ([bf9afe8](https://github.com/agrc/dhhs-cooling-towers/commit/bf9afe88e9b39925557258667ce06c3ce9e62337))
+* grammar ([80709a9](https://github.com/agrc/dhhs-cooling-towers/commit/80709a977a6ce97e77f83939daa8ddebbd47dff1))
+* remove unnecessary steps ([7a255ed](https://github.com/agrc/dhhs-cooling-towers/commit/7a255edbd139d396ecf70a002a32dceca2ebcf4f))
+
+
+### 🎨 Design Improvements
+
+* formatting ([be58bed](https://github.com/agrc/dhhs-cooling-towers/commit/be58bed234ae9546b76340112083a0b38ed127f6))
+
 ## [1.0.0-1](https://github.com/agrc/dhhs-cooling-towers/compare/v1.0.0-0...v1.0.0-1) (2023-05-15)
 
 
