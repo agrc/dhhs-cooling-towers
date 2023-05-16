@@ -83,3 +83,13 @@ To test a small amount of data
    - `SKIP`: int e.g. 1106600
    - `TAKE`: int e.g. 50
    - `JOB_NAME`: string e.g. alligator
+
+To run a batch job
+
+1. Set the number of tasks to your desired value e.g. 10000
+1. Set the concurrency to your desired value e.g. 35
+1. Set the environment variables
+   - `JOB_NAME`: string e.g. alligator
+   - `JOB_SIZE`: int e.g. 50 (this value needs to be processable within the timeout)
+
+Our metrics show that we can process 10 jobs a minute. The default cloud run timeout is 10 minutes.
