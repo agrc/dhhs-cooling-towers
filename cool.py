@@ -28,7 +28,9 @@ QUAD_WORD = None
 MODEL = None
 SECRETS = None
 PROJECT_ID = getenv("PROJECT_ID")
-CONNECTION_NAME = getenv("CLOUDSQL_CONNECTION_STRING")
+CONNECTION_NAME = getenv("CLOUDSQL_CONNECTION_STRING") or ""
+# initialize Cloud SQL Python Connector object
+connector = Connector()
 
 
 def _get_connection():
@@ -38,19 +40,18 @@ def _get_connection():
         None
 
     Returns:
-        dict: A dictionary containing the secrets
+        pg8000.dbapi.Connection: A pg8000 connection object
     """
-    with Connector() as connector:
-        conn = connector.connect(
-            CONNECTION_NAME,  # Cloud SQL Instance Connection Name
-            "pg8000",
-            user="cloud-run-sa@ut-dts-agrc-dhhs-towers-dev.iam",
-            db="towers",
-            enable_iam_auth=True,
-            ip_type=IPTypes.PUBLIC,
-        )
+    conn = connector.connect(
+        CONNECTION_NAME,  # Cloud SQL Instance Connection Name
+        "pg8000",
+        user="cloud-run-sa@ut-dts-agrc-dhhs-towers-dev.iam",
+        db="towers",
+        enable_iam_auth=True,
+        ip_type=IPTypes.PUBLIC,
+    )
 
-        return conn
+    return conn
 
 
 if "PY_ENV" in environ and environ["PY_ENV"] == "production":
