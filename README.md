@@ -46,6 +46,13 @@ Tools to extract cooling tower locations from aerial imagery
       );
       ```
 
+      1. Grant access to users
+
+      ```sql
+         GRANT pg_read_all_data TO "cloud-run-sa@ut-dts-agrc-dhhs-towers-dev.iam";
+         GRANT pg_write_all_data TO "cloud-run-sa@ut-dts-agrc-dhhs-towers-dev.iam";
+      ```
+
 1. Import the CSV into the `images_within_habitat` table
 
 ## To work with the CLI locally
