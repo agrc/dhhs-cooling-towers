@@ -9,6 +9,7 @@
     "CLOUDSQL",
     "Codecov",
     "dataframe",
+    "dbapi",
     "dhhs",
     "docopt",
     "documentai",
