@@ -107,8 +107,9 @@ def process_all_tiles(job_name, task_index, task_size, skip, take):
     #: if nonzero numbers are provided as environment variables, they will be used
     #: otherwise, we assume a static job_size environment variable is passed in and
     #: calculate skip/take based on the task_index
+    concurrent_tasks = int(getenv("CONCURRENT_TASKS") or 35)
     if skip in (0, None) and take in (0, None):
-        skip = task_index * task_size
+        skip = (task_index % concurrent_tasks) * task_size
         take = task_size
 
     logging.info("job: %s task: %i start %s", job_name, task_index, {"skip": skip, "take": take})
