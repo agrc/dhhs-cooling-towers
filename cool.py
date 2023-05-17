@@ -618,7 +618,9 @@ def append_results(results_df):
     try:
         task_start = perf_counter()
 
-        rows = results_df.to_sql("cooling_tower_results", POOL, if_exists="append", index=False)
+        rows = results_df.to_sql(
+            "cooling_tower_results", POOL, if_exists="append", index=False, method="multi", chunksize=1000
+        )
 
         logging.info("update cooling_tower_results query: %s", format_time(perf_counter() - task_start))
         if rows > 0:
