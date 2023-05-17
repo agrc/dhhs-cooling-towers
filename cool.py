@@ -115,7 +115,7 @@ def process_all_tiles(job_name, task_index, task_size, skip, take):
     rows = get_rows(skip, take)
 
     for row in rows:
-        logging.info("starting %i, %i", row.col_num, row.row_num)
+        logging.info("%i, %i start", row.col_num, row.row_num)
 
         row_start = perf_counter()
         tiles = download_tiles(row.col_num, row.row_num, None)
@@ -127,11 +127,11 @@ def process_all_tiles(job_name, task_index, task_size, skip, take):
 
         result_start = perf_counter()
         results = detect_towers(mosaic_image)
-        logging.info("%i, %i pytorch: %s", row.col_num, row.row_num, format_time(perf_counter() - result_start))
+        logging.info("%i, %i towerscout: %s", row.col_num, row.row_num, format_time(perf_counter() - result_start))
 
         if not results:
             logging.info(
-                "%i, %i finished: %s",
+                "%i, %i finish: %s",
                 row.col_num,
                 row.row_num,
                 format_time(perf_counter() - row_start),
@@ -141,7 +141,7 @@ def process_all_tiles(job_name, task_index, task_size, skip, take):
 
         locate_start = perf_counter()
         results_df = locate_results(results, row.col_num, row.row_num)
-        logging.info("georeference: %s", format_time(perf_counter() - locate_start))
+        logging.info("%i, %i georeference: %s", row.col_num, row.row_num, format_time(perf_counter() - locate_start))
 
         if len(results_df.index) == 0:
             logging.debug("no results to upload, updating the index")
@@ -149,7 +149,7 @@ def process_all_tiles(job_name, task_index, task_size, skip, take):
             update_index(row.col_num, row.row_num)
 
             logging.info(
-                "%i, %i finished: %s",
+                "%i, %i finish: %s",
                 row.col_num,
                 row.row_num,
                 format_time(perf_counter() - row_start),
@@ -161,7 +161,13 @@ def process_all_tiles(job_name, task_index, task_size, skip, take):
 
         append_start = perf_counter()
         append_status = append_results(results_df)
-        logging.info("%i, %i append results: %s", row.col_num, row.row_num, format_time(perf_counter() - append_start))
+        logging.info(
+            "%i, %i saving %i: %s",
+            row.col_num,
+            row.row_num,
+            len(results_df.index),
+            format_time(perf_counter() - append_start),
+        )
 
         if append_status != "SUCCESS":
             logging.warning("append unsuccessful for col: %i row: %i, skipping index update", row.col_num, row.row_num)
@@ -171,7 +177,7 @@ def process_all_tiles(job_name, task_index, task_size, skip, take):
         update_index(row.col_num, row.row_num)
 
         logging.info(
-            "%i, %i finished: %s",
+            "%i, %i finish: %s",
             row.col_num,
             row.row_num,
             format_time(perf_counter() - row_start),
@@ -412,7 +418,7 @@ def build_mosaic_image(tiles, col, row, out_dir):
     total_height = tile_width * number_rows
     total_width = tile_width * number_columns
 
-    logging.info("mosaicking images for %s", tile_name)
+    logging.debug("mosaicking images for %s", tile_name)
 
     mosaic_image = np.zeros((total_height, total_width, 3), dtype=np.uint8)
     mosaic_image[:, :] = (255, 255, 255)
@@ -507,7 +513,7 @@ def detect_towers(image):
         result (obj): pytorch result object
     """
     if image is None:
-        logging.info("no image to detect towers on: %s", type(image))
+        logging.warning("no image to detect towers on: %s", type(image))
         return None
 
     towerscout_model = _get_model()
@@ -534,9 +540,7 @@ def detect_towers(image):
     if isinstance(image, np.ndarray):
         image = reorder_colors_to_rgb(image)
 
-    scan_start = perf_counter()
     results = towerscout_model(image)
-    logging.info("time to scan image: %s", format_time(perf_counter() - scan_start))
 
     return results
 
@@ -556,7 +560,7 @@ def locate_results(results, col, row):
 
     #: check for empty dataframe
     if results_df.empty:
-        logging.info("empty dataframe, no cooling towers detected")
+        logging.debug("empty dataframe, no cooling towers detected")
 
         return results_df
 
@@ -610,7 +614,7 @@ def append_results(results_df):
         results_df (dataframe): dataframe with cooling tower detection results
 
     Returns:
-        None
+        string: status of the append operation FAIL or SUCCESS
     """
     #: initialize status as None
     status = "FAIL"
