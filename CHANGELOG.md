@@ -1,5 +1,22 @@
 # Changelog
 
+## [1.0.0-5](https://github.com/agrc/dhhs-cooling-towers/compare/v1.0.0-4...v1.0.0-5) (2023-05-17)
+
+
+### 🐛 Bug Fixes
+
+* update logging ([dbfa5bc](https://github.com/agrc/dhhs-cooling-towers/commit/dbfa5bc0c54d23693165c8d89262420ecf50f2b2))
+
+
+### 📖 Documentation Improvements
+
+* add index creation ([c24840d](https://github.com/agrc/dhhs-cooling-towers/commit/c24840d6af1ad64f55d653318b342ab650d809d8))
+
+
+### 🚀 Features
+
+* set insert method with chunksize for results ([60b448b](https://github.com/agrc/dhhs-cooling-towers/commit/60b448bb4e15e48adc1ef4f5ec6f4616ea1f11e8))
+
 ## [1.0.0-4](https://github.com/agrc/dhhs-cooling-towers/compare/v1.0.0-3...v1.0.0-4) (2023-05-16)
 
 
