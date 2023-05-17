@@ -5,6 +5,7 @@
     "astype",
     "backoff",
     "buildpacks",
+    "chunksize",
     "cloudrun",
     "CLOUDSQL",
     "Codecov",
