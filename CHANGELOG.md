@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.0-6](https://github.com/agrc/dhhs-cooling-towers/compare/v1.0.0-5...v1.0.0-6) (2023-05-17)
+
+
+### 🐛 Bug Fixes
+
+* reduce offset size to improve query performance ([d8b27a7](https://github.com/agrc/dhhs-cooling-towers/commit/d8b27a783a754f7878431c23bf12ee969f130578))
+
 ## [1.0.0-5](https://github.com/agrc/dhhs-cooling-towers/compare/v1.0.0-4...v1.0.0-5) (2023-05-17)
 
 
