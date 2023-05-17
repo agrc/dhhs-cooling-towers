@@ -26,6 +26,8 @@ Tools to extract cooling tower locations from aerial imagery
          col_num int NULL,
          processed bool NULL DEFAULT false
       );
+
+      CREATE UNIQUE INDEX idx_images_within_habitat_all ON public.images_within_habitat USING btree (row_num, col_num, processed);
       ```
 
       1. Create a cloud sql table for the results
