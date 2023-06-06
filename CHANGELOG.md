@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.0.0-7](https://github.com/agrc/dhhs-cooling-towers/compare/v1.0.0-6...v1.0.0-7) (2023-06-06)
+
+
+### 🚀 Features
+
+* add script to build WMTS index ([92a05e8](https://github.com/agrc/dhhs-cooling-towers/commit/92a05e8efadadac86cb5d9d6f89ecea7a52509fa))
+
+
+### 📖 Documentation Improvements
+
+* add cooling tower ID references to readme ([86e2680](https://github.com/agrc/dhhs-cooling-towers/commit/86e26800daea365f3c9bd9c9021f9df1eee08966))
+* update readme with prerequisites ([60602ca](https://github.com/agrc/dhhs-cooling-towers/commit/60602ca07dd18a5183f7db9cb7b55d874beb448d))
+
 ## [1.0.0-6](https://github.com/agrc/dhhs-cooling-towers/compare/v1.0.0-5...v1.0.0-6) (2023-05-17)
 
 
