@@ -2,6 +2,28 @@
 
 Tools to extract cooling tower locations from aerial imagery
 
+## Prerequisites
+1. Create WMTS index
+   - Run `prerequisites\polars_build_offet_index.py`
+   - This creates a parquet file (`imagery_index.parquet`) that will be loaded into BigQuery by terraform
+1. Create the processing footprint
+   - This was done manually in ArcGIS Pro with the following steps:
+      1. Buffer [Utah Census Places 2020](https://opendata.gis.utah.gov/datasets/utah-census-places-2020/explore) by 800m
+      1. Query [Utah Buildings](https://opendata.gis.utah.gov/datasets/utah-buildings/explore) down to those larger than 464.5 sq m (5000 sq ft)
+      1. Select by Location the queried buildings that are more than 800m from the census places buffer
+      1. Export selected buildings to a new layer
+      1. Buffer the new buildings layer by 800m
+      1. Combine the buffered census places and buffered buildings into a single polygon layer
+      1. Simplify the combined polygon layer to remove vertices
+      1. Project the simplified polygon layer to WGS84 (EPSG: 4326)
+      1. Export the projected polygon layer to shapefile (processing_footprint.shp)
+      1. Convert the processing footprint from shapefile to CSV with geometries represented as GeoJSON using GDAL
+         - Use the process outlined in this [Blog Post](https://medium.com/google-cloud/how-to-load-geographic-data-like-zipcode-boundaries-into-bigquery-25e4be4391c8) about loading geographic data into BigQuery
+         - `ogr2ogr -f csv -dialect sqlite -sql "select AsGeoJSON(geometry) AS geom, * from processing_footprint" footprints_in_4326.csv processing_footprint.shp`
+      1. The `footprints_in_4326.csv` file will be loaded into BigQuery by terraform
+
+
+
 ## Data preparation
 
 1. Run the tower scout terraform
