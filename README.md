@@ -126,3 +126,9 @@ To run a batch job
    - `JOB_SIZE`: int e.g. 50 (this value needs to be processable within the timeout)
 
 Our metrics show that we can process 10 jobs a minute. The default cloud run timeout is 10 minutes.
+
+## References for Identifying Cooling Towers in Aerial Imagery
+- [CDC Procedures for Identifying Cooling Towers](https://www.cdc.gov/legionella/health-depts/environmental-inv-resources/id-cooling-towers.html)
+- [CDC Photos of Cooling Towers](https://www.cdc.gov/legionella/health-depts/environmental-inv-resources/cooling-tower-images.html)
+- [California Department of Public Health: Cooling Tower Identification 101](https://www.cdph.ca.gov/Programs/CID/DCDC/CDPH%20Document%20Library/CoolingTowerIDGuideProtocol.pdf)
+- [California Department of Public Health: Cooling Tower Identification Guide Supplement](https://www.cdph.ca.gov/Programs/CID/DCDC/CDPH%20Document%20Library/CTIDGuideSupplement.pdf)
