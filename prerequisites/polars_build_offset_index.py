@@ -19,7 +19,7 @@ readable_start = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
 print("The script start time is {}".format(readable_start))
 
 #: set up variables
-out_dir = r'C:\Users\eneemann\Desktop\Neemann\cooling_towers\boundary'
+out_dir = r'C:\temp'
 
 #: Utah WMTS tiling info
 x_min = 192093
