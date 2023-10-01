@@ -20,10 +20,10 @@ jobs:
 
     steps:
       - name: ⬇️ Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: 🕺️ Checkout model
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           repository: ultralytics/yolov5
           path: yolov5
