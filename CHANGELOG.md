@@ -1,5 +1,75 @@
 # Changelog
 
+## 1.0.0 (2023-10-06)
+
+
+### 🚀 Features
+
+* add more error info ([e0c092b](https://github.com/agrc/dhhs-cooling-towers/commit/e0c092b63d1b32324f3e4be761a6b3f5334cfea0))
+* add more perf_counters ([96ffc34](https://github.com/agrc/dhhs-cooling-towers/commit/96ffc342467653c4f7f04dc88e62527c32121fae))
+* add script to build WMTS index ([59252f4](https://github.com/agrc/dhhs-cooling-towers/commit/59252f442e6559ad8cec9ae4a101865d7c0de95a))
+* add skip/take to logs ([aebb49d](https://github.com/agrc/dhhs-cooling-towers/commit/aebb49d2db65d42bac377969172d114c734cfbde))
+* adjust conf and overlap thresholds for more towers ([d19a6cd](https://github.com/agrc/dhhs-cooling-towers/commit/d19a6cd1cd5b6cd0f2c93d3adb5a0e218cea16f1))
+* append results into big query ([8c7a63c](https://github.com/agrc/dhhs-cooling-towers/commit/8c7a63c75c06d02cef2184e2c97b818e83b3b9b6))
+* check status, only call update_index on success ([d586afc](https://github.com/agrc/dhhs-cooling-towers/commit/d586afc5046bd06b975a5c35de1e47c2f6de396d))
+* defend bq table edits ([e38c426](https://github.com/agrc/dhhs-cooling-towers/commit/e38c426428216f2369485491db02a0dd3701f2ee))
+* function to process all tiles ([037de59](https://github.com/agrc/dhhs-cooling-towers/commit/037de59066a905d508dcf85bc2f58687eaea4b2b))
+* function to update bq index ([cd6cab4](https://github.com/agrc/dhhs-cooling-towers/commit/cd6cab4e0d09e869eec6870568b2d93e054a0225))
+* get defensive with the model ([eeac863](https://github.com/agrc/dhhs-cooling-towers/commit/eeac86325b6284de87fe69d6eca6884403df24ae))
+* get rows from bigquery function ([f9cd35d](https://github.com/agrc/dhhs-cooling-towers/commit/f9cd35dcc4a577735e1ef317f3543e21d0689ee7))
+* initial code push ([#1](https://github.com/agrc/dhhs-cooling-towers/issues/1)) ([4390710](https://github.com/agrc/dhhs-cooling-towers/commit/4390710d08e32df9a06a5605b76dcdb27b1baa16))
+* main function for cloud run ([aa67381](https://github.com/agrc/dhhs-cooling-towers/commit/aa67381be101aee6e46a8d71d9bda76def1ed55b))
+* play some defense on mercantile ([b1c2228](https://github.com/agrc/dhhs-cooling-towers/commit/b1c2228b5e6be74ce9b39278b3244f13e8f0eb9e))
+* print sorted results in CLI ([40c184b](https://github.com/agrc/dhhs-cooling-towers/commit/40c184b9c8dec83d53a59df07c7914b663bac535))
+* set insert method with chunksize for results ([19e2536](https://github.com/agrc/dhhs-cooling-towers/commit/19e2536d5bcc3e5c0289f65db579ec92ceaeb31b))
+* skip/take from env variables ([3006512](https://github.com/agrc/dhhs-cooling-towers/commit/30065128ba6721d33fbb4622538aea6cc8f138cd))
+
+
+### 🐛 Bug Fixes
+
+* all code paths should have a return ([8e15052](https://github.com/agrc/dhhs-cooling-towers/commit/8e150521cfe0c16473c7a8865f650a7cc465a2be))
+* assign variables before using ([11d8345](https://github.com/agrc/dhhs-cooling-towers/commit/11d8345dfb62d87d7ff556e351762d08a6b15818))
+* import environ ([79ff36a](https://github.com/agrc/dhhs-cooling-towers/commit/79ff36a127e29919bca5113fc8300132706594ce))
+* naming conventions ([ab7b398](https://github.com/agrc/dhhs-cooling-towers/commit/ab7b398af4dd8c2c314e59f361b06b9a228b0e6b))
+* only append tiles that are not None ([c082230](https://github.com/agrc/dhhs-cooling-towers/commit/c082230fe15b84820a3af29e2794cc3ce5cf1447))
+* perf_counter on downloads ([942adce](https://github.com/agrc/dhhs-cooling-towers/commit/942adce29e9bf9b8390bcce1edf7e591aae3fa96))
+* reduce offset size to improve query performance ([d058c4f](https://github.com/agrc/dhhs-cooling-towers/commit/d058c4f20237ad6fa1247a416cf85cd796a9b4f1))
+* requirements ([1f6f17b](https://github.com/agrc/dhhs-cooling-towers/commit/1f6f17ba1ad2922b9d1ae8778105d317def03025))
+* update connector creation ([3460901](https://github.com/agrc/dhhs-cooling-towers/commit/34609013f5b3b5b8eb9d9b446397a1ae0badcba9))
+* update index if no results ([b3213e5](https://github.com/agrc/dhhs-cooling-towers/commit/b3213e5cf95a9e7c822fad115e3d5d1139b97d00))
+* update logging ([3c7d704](https://github.com/agrc/dhhs-cooling-towers/commit/3c7d704db12f1a0f922e0b46c4f73eda213db4a7))
+
+
+### 📖 Documentation Improvements
+
+* add cooling tower ID references to readme ([3a22782](https://github.com/agrc/dhhs-cooling-towers/commit/3a227827e12e01f700c60108deabbd2a562e2e24))
+* add directory info ([db78bf4](https://github.com/agrc/dhhs-cooling-towers/commit/db78bf4d9faf9a098a813242081e0325d66e83b7))
+* add how to run the batch job ([293bdf2](https://github.com/agrc/dhhs-cooling-towers/commit/293bdf228c538e2165a24f6c2c02c8c0dbf332d0))
+* add index creation ([e37f40b](https://github.com/agrc/dhhs-cooling-towers/commit/e37f40b931311d4e6c832bcb4393d2efba1efc09))
+* add small batch cloud run values ([e9bb75b](https://github.com/agrc/dhhs-cooling-towers/commit/e9bb75b817977367710c3b67b32752cb6a629540))
+* add some CLI info ([79c567b](https://github.com/agrc/dhhs-cooling-towers/commit/79c567bdabac260cb83aa3b9d57de871909825a6))
+* clean up docstring and comments ([7bb8e00](https://github.com/agrc/dhhs-cooling-towers/commit/7bb8e008ec3256fee1af7fc072c2ad9449fb9719))
+* document how to prepare the data ([66c51c1](https://github.com/agrc/dhhs-cooling-towers/commit/66c51c15e9b9c3ca4e3cd09724bd44ac02ffa1ef))
+* fix copy paste error ([6dd3b4e](https://github.com/agrc/dhhs-cooling-towers/commit/6dd3b4e9723866d987549a15bd312a9ac022ac88))
+* grammar ([a664cdb](https://github.com/agrc/dhhs-cooling-towers/commit/a664cdb138d1762dad1c18455f938cc665bee981))
+* must grant access to users ([187741a](https://github.com/agrc/dhhs-cooling-towers/commit/187741a534166528c38ddf7c0204a0eb54e2b266))
+* remove unnecessary steps ([2b70962](https://github.com/agrc/dhhs-cooling-towers/commit/2b7096210b5698fa16cf1216979c2c15c0dd398e))
+* reorder data prep steps ([eb95a54](https://github.com/agrc/dhhs-cooling-towers/commit/eb95a54469fbaf41b4f8bdd362487f2a38e57243))
+* update readme with prerequisites ([fd7f679](https://github.com/agrc/dhhs-cooling-towers/commit/fd7f67934661b40c642e2681bacbd57d59347fa1))
+
+
+### 🎨 Design Improvements
+
+* change to getenv import ([c4e6e07](https://github.com/agrc/dhhs-cooling-towers/commit/c4e6e0769047a7fcebfea0f35840c34b343e171f))
+* formatting ([90111e0](https://github.com/agrc/dhhs-cooling-towers/commit/90111e054df17edcd421e4fd7acd6fc804c24b50))
+* formatting ([fa4ed17](https://github.com/agrc/dhhs-cooling-towers/commit/fa4ed1725b06f94fcc80bc5ecc7610316ac721b6))
+* formatting ([0d9731f](https://github.com/agrc/dhhs-cooling-towers/commit/0d9731fd74a0a6ea57e7e407b623e48a8f83d29a))
+* remove unnecessary else ([4c7978e](https://github.com/agrc/dhhs-cooling-towers/commit/4c7978e84fa4bde317b9b09509d9a1531eafe360))
+* remove unnecessary returns ([f795f57](https://github.com/agrc/dhhs-cooling-towers/commit/f795f57c852b768f22159b6a3281cfe9d74ab6da))
+* trim extra spaces ([7fed109](https://github.com/agrc/dhhs-cooling-towers/commit/7fed10951535d61c346990d277ca3effc7c60905))
+* trim whitespace and extra newlines ([726fc37](https://github.com/agrc/dhhs-cooling-towers/commit/726fc37ddb0088ca06af924f1297d29a18b059c2))
+* use getenv ([c95ea95](https://github.com/agrc/dhhs-cooling-towers/commit/c95ea9545bab36a0279c25380c291bbf22a3e11b))
+
 ## [1.0.0-6](https://github.com/agrc/dhhs-cooling-towers/compare/v1.0.0-5...v1.0.0-6) (2023-05-17)
 
 
