@@ -15,9 +15,13 @@ jobs:
     steps:
       - name: ⬇️ Checkout code
         uses: actions/checkout@v4
+        with:
+          show-progress: false
 
       - name: 🕺️ Checkout model
         uses: actions/checkout@v4
+        with:
+          show-progress: false
         with:
           repository: ultralytics/yolov5
           path: yolov5
