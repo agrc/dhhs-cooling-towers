@@ -23,12 +23,12 @@ jobs:
 
     steps:
       - name: ⬇️ Checkout code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           show-progress: false
 
       - name: 🕺️ Checkout model
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           show-progress: false
           repository: ultralytics/yolov5
